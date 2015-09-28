@@ -11,6 +11,7 @@
 *.user
 *.opensdf
 *.obj
+*.pdb
 .DS_Store
 xcuserdata
 log.txt
