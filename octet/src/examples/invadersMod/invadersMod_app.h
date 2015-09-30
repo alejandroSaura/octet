@@ -263,21 +263,13 @@ namespace octet {
 		sprites[ball_sprite].translate(ball_velocity_x/2, ball_velocity_y/2);
 
 		//collision handlers
-		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite+2])) { //left wall
+		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite + 2]) || sprites[ball_sprite].collides_with(sprites[first_border_sprite + 3])) { //side walls
 			ball_velocity_x *= -1;
 		}
 
-		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite + 1])) { //top wall
+		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite + 1]) || sprites[ball_sprite].collides_with(sprites[first_border_sprite])) { //top/bottom walls
 			ball_velocity_y *= -1;
-		}
-
-		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite + 3])) { //right wall
-			ball_velocity_x *= -1;
-		}
-
-		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite])) { //bottom wall
-			ball_velocity_y *= -1;
-		}
+		}		
 	}
 
 
