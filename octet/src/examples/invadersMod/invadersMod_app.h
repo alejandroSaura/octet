@@ -188,8 +188,8 @@ namespace octet {
 	float player_velocity;
 
 	//speed of ball
-	float ball_velocity;
-
+	float ball_velocity_x;
+	float ball_velocity_y;
     
 
     // sounds
@@ -240,6 +240,8 @@ namespace octet {
       }
     }
 
+	
+
     // use the keyboard to move the ship
     void move_ship() {
       
@@ -256,6 +258,27 @@ namespace octet {
         }
       }
     }
+
+	void move_ball() {
+		sprites[ball_sprite].translate(ball_velocity_x/2, ball_velocity_y/2);
+
+		//collision handlers
+		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite+2])) { //left wall
+			ball_velocity_x *= -1;
+		}
+
+		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite + 1])) { //top wall
+			ball_velocity_y *= -1;
+		}
+
+		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite + 3])) { //right wall
+			ball_velocity_x *= -1;
+		}
+
+		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite])) { //bottom wall
+			ball_velocity_y *= -1;
+		}
+	}
 
 
     void draw_text(texture_shader &shader, float x, float y, float scale, const char *text) {
@@ -358,6 +381,8 @@ namespace octet {
 
       // sundry counters and game state.
 	  player_velocity = 0.1f;
+	  ball_velocity_x = 0.1f;
+	  ball_velocity_y = 0.1f;
       
       live_invaderers = num_invaderers;
       num_lives = 3;
@@ -372,6 +397,7 @@ namespace octet {
       }
 
       move_ship();
+	  move_ball();
 
       
 
