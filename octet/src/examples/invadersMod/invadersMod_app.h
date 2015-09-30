@@ -152,25 +152,19 @@ namespace octet {
     enum {
       num_sound_sources = 8,
       num_rows = 5,
-      num_cols = 10,
+      num_cols = 8,
       num_missiles = 2,
       num_bombs = 2,
       num_borders = 4,
-      num_invaderers = num_rows * num_cols,
+      num_blocks = num_rows * num_cols,
 
       // sprite definitions
       player_sprite = 0,
 	  ball_sprite,
       game_over_sprite,
 
-      first_invaderer_sprite,
-      last_invaderer_sprite = first_invaderer_sprite + num_invaderers - 1,
-
-      first_missile_sprite,
-      last_missile_sprite = first_missile_sprite + num_missiles - 1,
-
-      first_bomb_sprite,
-      last_bomb_sprite = first_bomb_sprite + num_bombs - 1,
+      first_block_sprite,
+      last_block_sprite = first_block_sprite + num_blocks - 1,      
 
       first_border_sprite,
       last_border_sprite = first_border_sprite + num_borders - 1,
@@ -182,7 +176,7 @@ namespace octet {
    
 
     // accounting for bad guys
-    int live_invaderers;
+    int live_blocks;
     int num_lives;
 
     // game state
@@ -200,6 +194,7 @@ namespace octet {
     // sounds
     ALuint whoosh;
     ALuint bang;
+	ALuint boing;
     unsigned cur_source;
     ALuint sources[num_sound_sources];
 
@@ -218,16 +213,16 @@ namespace octet {
     ALuint get_sound_source() { return sources[cur_source++ % num_sound_sources]; }
 
     // called when we hit an enemy
-    void on_hit_invaderer() {
+    void on_hit_block() {
       ALuint source = get_sound_source();
       alSourcei(source, AL_BUFFER, bang);
       alSourcePlay(source);
 
-      live_invaderers--;
+      live_blocks--;
       score++;
-      if (live_invaderers == 4) {
+      if (live_blocks == 4) {
        
-      } else if (live_invaderers == 0) {
+      } else if (live_blocks == 0) {
         game_over = true;
         sprites[game_over_sprite].translate(-20, 0);
       }
@@ -256,10 +251,12 @@ namespace octet {
 		//collision handlers
 		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite + 2]) || sprites[ball_sprite].collides_with(sprites[first_border_sprite + 3])) { //side walls
 			ball_velocity_x *= -1;
+			
 		}
 
 		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite + 1])) { //top wall
 			ball_velocity_y *= -1;
+			
 		}
 
 		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite])){ //bottom wall
@@ -275,26 +272,47 @@ namespace octet {
 
 		}
 
-		if (sprites[ball_sprite].collides_with(sprites[player_sprite])){
-
-			ball_velocity_y *= -1;
-
-			//the player has two hit areas, so we have to bounce the ball depending
-			//on which area was hit.
-
-			float ballX, ballY, playerX, playerY;
-
-			sprites[ball_sprite].getPosition(&ballX, &ballY);
-			sprites[player_sprite].getPosition(&playerX, &playerY);
-
-			if ((ballX < playerX) && (ball_velocity_x > 0)){
-				ball_velocity_x *= -1;
-			}
-			if ((ballX > playerX) && (ball_velocity_x < 0)){
-				ball_velocity_x *= -1;
-			}
-
+		if (sprites[ball_sprite].collides_with(sprites[player_sprite])){				
+			on_playerHit();
 		}
+
+		for (int j = 0; j != num_blocks; ++j) {
+			sprite &block = sprites[first_block_sprite + j];
+			if (block.is_enabled() && sprites[ball_sprite].collides_with(block)) {
+				block.is_enabled() = false;
+				block.translate(20, 0);
+				block.is_enabled() = false;
+				ball_velocity_y *= -1;
+				on_hit_block();
+
+				//goto next_missile;
+
+			//next_missile:;
+			}
+		}
+	}
+
+
+
+	void on_playerHit(){
+
+		ball_velocity_y *= -1;
+
+		//the player has two hit areas, so we have to bounce the ball depending
+		//on which area was hit.
+
+		float ballX, ballY, playerX, playerY;
+
+		sprites[ball_sprite].getPosition(&ballX, &ballY);
+		sprites[player_sprite].getPosition(&playerX, &playerY);
+
+		if ((ballX < playerX) && (ball_velocity_x > 0)){
+			ball_velocity_x *= -1;
+		}
+		if ((ballX > playerX) && (ball_velocity_x < 0)){
+			ball_velocity_x *= -1;
+		}
+
 	}
 
 
@@ -357,12 +375,12 @@ namespace octet {
       GLuint GameOver = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/GameOver.gif");
       sprites[game_over_sprite].init(GameOver, 20, 0, 3, 1.5f);
 
-      GLuint invaderer = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/invaderer.gif");
+      GLuint block = resource_dict::get_texture_handle(GL_RGBA, "assets/invadersMod/block.gif");
       for (int j = 0; j != num_rows; ++j) {
         for (int i = 0; i != num_cols; ++i) {
-          assert(first_invaderer_sprite + i + j*num_cols <= last_invaderer_sprite);
-          sprites[first_invaderer_sprite + i + j*num_cols].init(
-            invaderer, ((float)i - num_cols * 0.5f) * 0.5f, 2.50f - ((float)j * 0.5f), 0.25f, 0.25f
+          assert(first_block_sprite + i + j*num_cols <= last_block_sprite);
+          sprites[first_block_sprite + i + j*num_cols].init(
+            block, ((float)i - num_cols * 0.5f) * 0.6f, 2.50f - ((float)j * 0.5f), 0.5f, 0.25f
           );
         }
       }
@@ -375,8 +393,9 @@ namespace octet {
       sprites[first_border_sprite+3].init(white, 3,  0, 0.2f, 6);      
 
       // sounds
-      whoosh = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/whoosh.wav");
-      bang = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/bang.wav");
+	  boing = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invadersMod/boing.wav");
+	  bang = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/bang.wav");
+
       cur_source = 0;
       alGenSources(num_sound_sources, sources);
 
@@ -385,7 +404,7 @@ namespace octet {
 	  ball_velocity_x = 0.1f;
 	  ball_velocity_y = 0.1f;
       
-      live_invaderers = num_invaderers;
+      live_blocks = num_blocks;
       num_lives = 3;
       game_over = false;
       score = 0;
