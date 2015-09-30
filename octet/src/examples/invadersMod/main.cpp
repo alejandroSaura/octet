@@ -11,7 +11,7 @@
 
 #include "../../octet.h"
 
-#include "invadersMod.h"
+#include "invadersMod_app.h"
 
 /// Create a box with octet
 int main(int argc, char **argv) {
@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
   octet::app::init_all(argc, argv);
 
   // our application.
-  octet::invadersMod app(argc, argv);
+  octet::invadersMod_app app(argc, argv);
   app.init();
 
   // open windows
