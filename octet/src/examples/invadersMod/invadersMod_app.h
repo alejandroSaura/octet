@@ -154,7 +154,8 @@ namespace octet {
       num_invaderers = num_rows * num_cols,
 
       // sprite definitions
-      ship_sprite = 0,
+      player_sprite = 0,
+	  ball_sprite,
       game_over_sprite,
 
       first_invaderer_sprite,
@@ -183,11 +184,13 @@ namespace octet {
     bool game_over;
     int score;
 
-	//player's speed
+	//speed of player
 	float player_velocity;
 
-    // speed of enemy
-    float invader_velocity;
+	//speed of ball
+	float ball_velocity;
+
+    
 
     // sounds
     ALuint whoosh;
@@ -218,7 +221,7 @@ namespace octet {
       live_invaderers--;
       score++;
       if (live_invaderers == 4) {
-        invader_velocity *= 4;
+       
       } else if (live_invaderers == 0) {
         game_over = true;
         sprites[game_over_sprite].translate(-20, 0);
@@ -242,14 +245,14 @@ namespace octet {
       
       // left and right arrows
       if (is_key_down(key_left)) {
-        sprites[ship_sprite].translate(-player_velocity, 0);
-        if (sprites[ship_sprite].collides_with(sprites[first_border_sprite+2])) {
-          sprites[ship_sprite].translate(+player_velocity, 0);
+        sprites[player_sprite].translate(-player_velocity, 0);
+        if (sprites[player_sprite].collides_with(sprites[first_border_sprite+2])) {
+          sprites[player_sprite].translate(+player_velocity, 0);
         }
       } else if (is_key_down(key_right)) {
-        sprites[ship_sprite].translate(+player_velocity, 0);
-        if (sprites[ship_sprite].collides_with(sprites[first_border_sprite+3])) {
-          sprites[ship_sprite].translate(-player_velocity, 0);
+        sprites[player_sprite].translate(+player_velocity, 0);
+        if (sprites[player_sprite].collides_with(sprites[first_border_sprite+3])) {
+          sprites[player_sprite].translate(-player_velocity, 0);
         }
       }
     }
@@ -306,7 +309,10 @@ namespace octet {
       font_texture = resource_dict::get_texture_handle(GL_RGBA, "assets/big_0.gif");
 
       GLuint ship = resource_dict::get_texture_handle(GL_RGBA, "assets/invadersMod/player.gif");
-      sprites[ship_sprite].init(ship, 0, -2.75f, 0.75f, 0.25f);
+      sprites[player_sprite].init(ship, 0, -2.75f, 0.75f, 0.25f);
+
+	  GLuint ball = resource_dict::get_texture_handle(GL_RGBA, "assets/invadersMod/ball.gif");
+	  sprites[ball_sprite].init(ball, 0, -1, 0.25f, 0.25f);
 
       GLuint GameOver = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/GameOver.gif");
       sprites[game_over_sprite].init(GameOver, 20, 0, 3, 1.5f);
@@ -352,7 +358,7 @@ namespace octet {
 
       // sundry counters and game state.
 	  player_velocity = 0.1f;
-      invader_velocity = 0.01f;
+      
       live_invaderers = num_invaderers;
       num_lives = 3;
       game_over = false;
@@ -369,7 +375,7 @@ namespace octet {
 
       
 
-      sprite &border = sprites[first_border_sprite+(invader_velocity < 0 ? 2 : 3)];
+      sprite &border = sprites[first_border_sprite+(3)];
       
     }
 
