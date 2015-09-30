@@ -231,21 +231,7 @@ namespace octet {
         game_over = true;
         sprites[game_over_sprite].translate(-20, 0);
       }
-    }
-
-    // called when we are hit
-    void on_hit_ship() {
-      ALuint source = get_sound_source();
-      alSourcei(source, AL_BUFFER, bang);
-      alSourcePlay(source);
-
-      if (--num_lives == 0) {
-        game_over = true;
-        sprites[game_over_sprite].translate(-20, 0);
-      }
-    }
-
-	
+    }	
 
     // use the keyboard to move the ship
     void move_ship() {
@@ -272,16 +258,29 @@ namespace octet {
 			ball_velocity_x *= -1;
 		}
 
-		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite + 1]) || sprites[ball_sprite].collides_with(sprites[first_border_sprite])) { //top/bottom walls
+		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite + 1])) { //top wall
 			ball_velocity_y *= -1;
+		}
+
+		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite])){ //bottom wall
+			if (--num_lives == 0) {
+				game_over = true;
+				sprites[game_over_sprite].translate(-20, 0);
+			}
+
+			sprites[ball_sprite].set_relative(sprites[first_border_sprite], 0, 3);			
+
+			if (ball_velocity_y < 0) ball_velocity_y *= -1;
+
+
 		}
 
 		if (sprites[ball_sprite].collides_with(sprites[player_sprite])){
 
 			ball_velocity_y *= -1;
 
-			//the player has two areas, so we have to bounce the ball depending
-			//on the hit area.
+			//the player has two hit areas, so we have to bounce the ball depending
+			//on which area was hit.
 
 			float ballX, ballY, playerX, playerY;
 
@@ -373,23 +372,7 @@ namespace octet {
       sprites[first_border_sprite+0].init(white, 0, -3, 6, 0.2f);
       sprites[first_border_sprite+1].init(white, 0,  3, 6, 0.2f);
       sprites[first_border_sprite+2].init(white, -3, 0, 0.2f, 6);
-      sprites[first_border_sprite+3].init(white, 3,  0, 0.2f, 6);
-
-      // use the missile texture
-      GLuint missile = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/missile.gif");
-      for (int i = 0; i != num_missiles; ++i) {
-        // create missiles off-screen
-        sprites[first_missile_sprite+i].init(missile, 20, 0, 0.0625f, 0.25f);
-        sprites[first_missile_sprite+i].is_enabled() = false;
-      }
-
-      // use the bomb texture
-      GLuint bomb = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/bomb.gif");
-      for (int i = 0; i != num_bombs; ++i) {
-        // create bombs off-screen
-        sprites[first_bomb_sprite+i].init(bomb, 20, 0, 0.0625f, 0.25f);
-        sprites[first_bomb_sprite+i].is_enabled() = false;
-      }
+      sprites[first_border_sprite+3].init(white, 3,  0, 0.2f, 6);      
 
       // sounds
       whoosh = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/whoosh.wav");
