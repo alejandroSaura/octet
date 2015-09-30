@@ -98,6 +98,11 @@ namespace octet {
       glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
 
+	void getPosition( float *X, float *Y){
+		(*X) = modelToWorld.w()[0];
+		(*Y) = modelToWorld.w()[1];
+	}
+
     // move the object
     void translate(float x, float y) {
       modelToWorld.translate(x, y, 0);
@@ -269,7 +274,28 @@ namespace octet {
 
 		if (sprites[ball_sprite].collides_with(sprites[first_border_sprite + 1]) || sprites[ball_sprite].collides_with(sprites[first_border_sprite])) { //top/bottom walls
 			ball_velocity_y *= -1;
-		}		
+		}
+
+		if (sprites[ball_sprite].collides_with(sprites[player_sprite])){
+
+			ball_velocity_y *= -1;
+
+			//the player has two areas, so we have to bounce the ball depending
+			//on the hit area.
+
+			float ballX, ballY, playerX, playerY;
+
+			sprites[ball_sprite].getPosition(&ballX, &ballY);
+			sprites[player_sprite].getPosition(&playerX, &playerY);
+
+			if ((ballX < playerX) && (ball_velocity_x > 0)){
+				ball_velocity_x *= -1;
+			}
+			if ((ballX > playerX) && (ball_velocity_x < 0)){
+				ball_velocity_x *= -1;
+			}
+
+		}
 	}
 
 
