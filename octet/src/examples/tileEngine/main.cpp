@@ -13,7 +13,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "tinyXMLUtils.h"
+#include "sprite.h"
 #include "tileEngine.h"
+
 
 /// Create a box with octet
 int main(int argc, char **argv) {

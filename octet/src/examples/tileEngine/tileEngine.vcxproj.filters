@@ -433,6 +433,9 @@
     <ClInclude Include="tileEngine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="sprite.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl">
