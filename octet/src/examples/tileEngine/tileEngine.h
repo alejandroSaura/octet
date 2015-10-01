@@ -47,6 +47,16 @@ namespace octet {
 
 			levelTMX = loadTMX("../../../assets/tileEngine/TestLevel/Dungeon.tmx");
 
+			//TiXmlNode *firstNode = levelTMX.FirstChild();
+
+			TiXmlNode* pParent = levelTMX.RootElement();
+			TiXmlNode* pChild;
+
+			for (pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
+			{				
+				printf("\n");
+			}
+
 
 			//sprite rendering test:
 			GLuint tileset1 = resource_dict::get_texture_handle(GL_RGBA, "assets/tileEngine/Objects/Wall.gif");
