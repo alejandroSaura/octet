@@ -50,7 +50,15 @@ namespace octet {
 
 			//sprite rendering test:
 			GLuint tileset1 = resource_dict::get_texture_handle(GL_RGBA, "assets/tileEngine/Objects/Wall.gif");
-			sprites[0].init(tileset1, 0, 0, 0.25f, 0.25f);
+			
+			float uvs[] = {
+				0, 0,
+				0.2f, 0,
+				0.2f, 0.2f,
+				0, 0.2f
+			};
+			
+			sprites[0].init(tileset1, 0, 0, 0.25f, 0.25f, uvs);
 		}
 
 		TiXmlDocument loadTMX(const char* pFilename){

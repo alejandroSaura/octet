@@ -13,6 +13,10 @@ namespace octet {
 		// what texture is on our sprite
 		int texture;
 
+		//uv coordinates
+		float uvCoord[8];
+		
+
 		// true if this sprite is enabled.
 		bool enabled;
 	public:
@@ -21,11 +25,16 @@ namespace octet {
 			enabled = true;
 		}
 
-		void init(int _texture, float x, float y, float w, float h) {
+		void init(int _texture, float x, float y, float w, float h, float uvs[8]) {
 			modelToWorld.loadIdentity();
 			modelToWorld.translate(x, y, 0);
 			halfWidth = w * 0.5f;
 			halfHeight = h * 0.5f;
+			for (int i = 0; i < 8; i++)
+			{
+				uvCoord[i] = uvs[i];
+			}				
+			
 			texture = _texture;
 			enabled = true;
 		}
@@ -63,17 +72,17 @@ namespace octet {
 			glEnableVertexAttribArray(attribute_pos);
 
 			// this is an array of the positions of the corners of the texture in 2D
-			static const float uvs[] = {
+			/*static const float uvs[] = {
 				0, 0,
 				1, 0,
 				1, 1,
 				0, 1,
-			};
+			};*/
 
 			// attribute_uv is position in the texture of each corner
 			// each corner (vertex) has 2 floats (x, y)
 			// there is no gap between the 2 floats and hence the stride is 2*sizeof(float)
-			glVertexAttribPointer(attribute_uv, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)uvs);
+			glVertexAttribPointer(attribute_uv, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)uvCoord);
 			glEnableVertexAttribArray(attribute_uv);
 
 			// finally, draw the sprite (4 vertices)
