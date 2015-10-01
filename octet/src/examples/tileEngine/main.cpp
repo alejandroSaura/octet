@@ -10,7 +10,9 @@
 #define OCTET_BULLET 1
 
 #include "../../octet.h"
-
+#include <stdio.h>
+#include <string.h>
+#include "tinyXMLUtils.h"
 #include "tileEngine.h"
 
 /// Create a box with octet

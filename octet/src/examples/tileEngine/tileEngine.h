@@ -5,6 +5,7 @@
 // Modular Framework for OpenGLES2 rendering on multiple platforms.
 //
 namespace octet {
+
   /// Scene containing a box with octet.
   class tileEngine : public app {
     // scene for drawing box
@@ -14,17 +15,34 @@ namespace octet {
     tileEngine(int argc, char **argv) : app(argc, argv) {
     }
 
+	TiXmlDocument levelTMX;
+
     /// this is called once OpenGL is initialized
     void app_init() {
       app_scene =  new visual_scene();
-      app_scene->create_default_camera_and_lights();
+      app_scene->create_default_camera_and_lights();  
 
-      material *red = new material(vec4(1, 0, 0, 1));
-      mesh_box *box = new mesh_box(vec3(4));
-      scene_node *node = new scene_node();
-      app_scene->add_child(node);
-      app_scene->add_mesh_instance(new mesh_instance(node, box, red));
+	  levelTMX = loadTMX("../../../assets/tileEngine/TestLevel/Dungeon.tmx");      
     }
+
+	TiXmlDocument loadTMX(const char* pFilename){
+
+		TiXmlDocument doc(pFilename);
+		bool tmxLoaded = doc.LoadFile();
+
+		if (tmxLoaded)
+		{
+			printf("\nfile loaded: %s\n", pFilename);
+			dump_to_stdout(&doc);
+			return doc;
+		}
+		else
+		{
+			printf("Failed to load TMX file \"%s\"\n", pFilename);
+			return nullptr;
+		}
+
+	}
 
     /// this is called to draw the world
     void draw_world(int x, int y, int w, int h) {
@@ -38,10 +56,8 @@ namespace octet {
       // draw the scene
       app_scene->render((float)vx / vy);
 
-      // tumble the box  (there is only one mesh instance)
-      scene_node *node = app_scene->get_mesh_instance(0)->get_node();
-      node->rotate(1, vec3(1, 0, 0));
-      node->rotate(1, vec3(0, 1, 0));
+      
+
     }
   };
 }
