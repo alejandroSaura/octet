@@ -53,12 +53,19 @@ namespace octet {
 			
 			float uvs[] = {
 				0, 0,
-				0.2f, 0,
-				0.2f, 0.2f,
-				0, 0.2f
+				0.05f, 0,
+				0.05f, 2*0.01960784f,
+				0, 2*0.01960784f
 			};
+
+			/*float uvs[] = {
+				0, 0,
+				1, 0,
+				1, 1,
+				0, 1,
+			};*/
 			
-			sprites[0].init(tileset1, 0, 0, 0.25f, 0.25f, uvs);
+			sprites[0].init(tileset1, 0, 0, 2, 4, uvs);
 		}
 
 		TiXmlDocument loadTMX(const char* pFilename){
