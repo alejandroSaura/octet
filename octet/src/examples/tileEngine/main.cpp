@@ -14,6 +14,7 @@
 #include <string.h>
 #include "tinyXMLUtils.h"
 #include "sprite.h"
+#include "tileset.h"
 #include "tileEngine.h"
 
 

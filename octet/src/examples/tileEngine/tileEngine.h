@@ -51,7 +51,7 @@ namespace octet {
 			//sprite rendering test:
 			GLuint tileset1 = resource_dict::get_texture_handle(GL_RGBA, "assets/tileEngine/Objects/Wall.gif");
 			
-			float uvs[] = {
+			float uvs[] = { //counter-clockwise; 0,0 is the bottom left.
 				0, 0,
 				0.05f, 0,
 				0.05f, 2*0.01960784f,
