@@ -4,6 +4,9 @@
 //
 // Modular Framework for OpenGLES2 rendering on multiple platforms.
 //
+
+using std::string;
+
 namespace octet {
 
 	//10 is a temporal value
@@ -29,7 +32,7 @@ namespace octet {
 	public:
 		/// this is called when we construct the class before everything is initialised.
 		tileEngine(int argc, char **argv) : app(argc, argv) {
-		}		
+		}
 
 		/// this is called once OpenGL is initialized
 		void app_init() {
@@ -43,7 +46,7 @@ namespace octet {
 
 			loadLevel("../../../assets/tileEngine/TestLevel/Dungeon.tmx");
 
-			testRender();			
+			testRender();
 		}
 
 		void testRender(){
@@ -88,14 +91,7 @@ namespace octet {
 
 					if (type == tilesetType){
 						printf("tileset found \n", pChild->Value());
-
-						TiXmlElement* element = pChild->ToElement();
-						TiXmlAttribute* pAttrib = element->FirstAttribute();
-						printf("first attribute: %s \n", pAttrib->Value());
-
-						tileset* set = new tileset();
-						//set->init();
-						tilesets.push_back(*set);
+						loadTileset(pChild);
 					}
 
 					if (type == layerType){
@@ -104,6 +100,66 @@ namespace octet {
 
 				}
 			}
+		}
+
+		void loadTileset(TiXmlNode* pChild)
+		{
+			tileset* set = new tileset();
+			const char* name;
+			const char* imageSource;
+			int width = 0;
+			int height = 0;
+			int tileWidth = 0;
+			int tileHeight = 0;
+
+			TiXmlElement* element = pChild->ToElement();
+			TiXmlAttribute* pAttrib = element->FirstAttribute();
+			//printf("first attribute: %s \n", pAttrib->Value());
+
+			while (pAttrib)
+			{
+				//printf("%s: value=[%s]", pAttrib->Name(), pAttrib->Value());							
+				//printf("\n");
+				string attName(pAttrib->Name());
+
+				if (attName.operator==("name")){
+					name = pAttrib->Value();
+				}
+				else if (attName.operator==("tilewidth")){
+					tileWidth = std::stoi(pAttrib->Value());
+				}
+				else if (attName.operator==("tileheight")){
+					tileHeight = std::stoi(pAttrib->Value());
+				}
+
+				pAttrib = pAttrib->Next();
+			}
+
+			TiXmlElement* imageElement = pChild->FirstChildElement();
+			pAttrib = imageElement->FirstAttribute();
+			//printf("first attribute: %s \n", pAttrib->Value());
+
+			while (pAttrib)
+			{
+				//printf("%s: value=[%s]", pAttrib->Name(), pAttrib->Value());							
+				//printf("\n");
+				string attName(pAttrib->Name());
+
+				if (attName.operator==("source")){
+					imageSource = pAttrib->Value();
+				}
+				else if (attName.operator==("width")){
+					width = std::stoi(pAttrib->Value());
+				}
+				else if (attName.operator==("height")){
+					height = std::stoi(pAttrib->Value());
+				}
+
+				pAttrib = pAttrib->Next();
+			}
+
+			set->init(name, imageSource, width, height, tileWidth, tileHeight);
+			tilesets.push_back(*set);
 		}
 
 		TiXmlDocument loadTMX(const char* pFilename){

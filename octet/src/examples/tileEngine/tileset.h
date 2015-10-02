@@ -2,8 +2,8 @@ namespace octet {
 
 	class tileset {
 
-		char* name;
-		char* imageSource;
+		const char* name;
+		const char* imageSource;
 
 		int width;
 		int height;
@@ -15,7 +15,7 @@ namespace octet {
 		int verticalTiles;
 
 	public:
-		void init(char* nam, char* imSo, int w, int h, int tileW, int tileH){
+		void init(const char* nam, const char* imSo, int w, int h, int tileW, int tileH){
 
 			name = nam;
 			imageSource = imSo;
