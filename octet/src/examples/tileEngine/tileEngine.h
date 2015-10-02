@@ -22,21 +22,17 @@ namespace octet {
 		// big array of sprites
 		sprite sprites[num_sprites];
 
+		//tilesets
+		std::vector<tileset> tilesets;
+
 
 	public:
 		/// this is called when we construct the class before everything is initialised.
 		tileEngine(int argc, char **argv) : app(argc, argv) {
-		}
-
-		TiXmlDocument levelTMX;
-
-
-
+		}		
 
 		/// this is called once OpenGL is initialized
 		void app_init() {
-			//app_scene =  new visual_scene();
-			//app_scene->create_default_camera_and_lights(); 
 
 			// set up the shader
 			texture_shader_.init();
@@ -45,37 +41,69 @@ namespace octet {
 			cameraToWorld.loadIdentity();
 			cameraToWorld.translate(0, 0, 3);
 
-			levelTMX = loadTMX("../../../assets/tileEngine/TestLevel/Dungeon.tmx");
+			loadLevel("../../../assets/tileEngine/TestLevel/Dungeon.tmx");
 
-			//TiXmlNode *firstNode = levelTMX.FirstChild();
+			testRender();			
+		}
+
+		void testRender(){
+			//sprite rendering test:
+			GLuint tileset1 = resource_dict::get_texture_handle(GL_RGBA, "assets/tileEngine/Objects/Wall.gif");
+
+			float uvs[] = { //counter-clockwise; 0,0 is the bottom left.
+				0, 0,
+				0.05f, 0,
+				0.05f, 2 * 0.01960784f,
+				0, 2 * 0.01960784f
+			};
+
+			/*float uvs[] = {
+			0, 0,
+			1, 0,
+			1, 1,
+			0, 1,
+			};*/
+
+			sprites[0].init(tileset1, 0, 0, 2, 4, uvs);
+		}
+
+		void loadLevel(const char* pFilename){
+
+			TiXmlDocument levelTMX;
+			levelTMX = loadTMX(pFilename);
 
 			TiXmlNode* pParent = levelTMX.RootElement();
 			TiXmlNode* pChild;
 
 			for (pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
-			{				
+			{
 				printf("\n");
+				if (pChild->Type() == TiXmlNode::TINYXML_ELEMENT){
+					//printf("element found! %s \n", pChild->Value());
+
+					string tilesetType = "tileset";
+					string layerType = "layer";
+
+					string type(pChild->Value());
+
+					if (type == tilesetType){
+						printf("tileset found \n", pChild->Value());
+
+						TiXmlElement* element = pChild->ToElement();
+						TiXmlAttribute* pAttrib = element->FirstAttribute();
+						printf("first attribute: %s \n", pAttrib->Value());
+
+						tileset* set = new tileset();
+						//set->init();
+						tilesets.push_back(*set);
+					}
+
+					if (type == layerType){
+						printf("layer found \n", pChild->Value());
+					}
+
+				}
 			}
-
-
-			//sprite rendering test:
-			GLuint tileset1 = resource_dict::get_texture_handle(GL_RGBA, "assets/tileEngine/Objects/Wall.gif");
-			
-			float uvs[] = { //counter-clockwise; 0,0 is the bottom left.
-				0, 0,
-				0.05f, 0,
-				0.05f, 2*0.01960784f,
-				0, 2*0.01960784f
-			};
-
-			/*float uvs[] = {
-				0, 0,
-				1, 0,
-				1, 1,
-				0, 1,
-			};*/
-			
-			sprites[0].init(tileset1, 0, 0, 2, 4, uvs);
 		}
 
 		TiXmlDocument loadTMX(const char* pFilename){
@@ -86,7 +114,7 @@ namespace octet {
 			if (tmxLoaded)
 			{
 				printf("\nfile loaded: %s\n", pFilename);
-				dump_to_stdout(&doc);
+				//dump_to_stdout(&doc);
 				return doc;
 			}
 			else
