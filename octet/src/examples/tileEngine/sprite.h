@@ -25,7 +25,7 @@ namespace octet {
 			enabled = true;
 		}
 
-		void init(int _texture, float x, float y, float w, float h, float uvs[8]) {
+		void init(int _texture, float x, float y, float w, float h, float uvs[8], bool en) {
 			modelToWorld.loadIdentity();
 			modelToWorld.translate(x, y, 0);
 			halfWidth = w * 0.5f;
@@ -36,7 +36,7 @@ namespace octet {
 			}				
 			
 			texture = _texture;
-			enabled = true;
+			enabled = en;
 		}
 
 		void render(texture_shader &shader, mat4t &cameraToWorld) {

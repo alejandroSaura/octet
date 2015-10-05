@@ -9,8 +9,7 @@ using std::string;
 
 namespace octet {
 
-	//10 is a temporal value
-	const int num_sprites = 10;
+	
 
 	/// Scene containing a box with octet.
 	class tileEngine : public app {
@@ -22,8 +21,8 @@ namespace octet {
 		// shader
 		texture_shader texture_shader_;
 
-		// big array of sprites
-		sprite sprites[num_sprites];
+		int num_sprites = 5000;
+		
 
 		//tilesets
 		//octet::dynarray<tileset> tilesets;
@@ -31,6 +30,10 @@ namespace octet {
 
 
 	public:
+
+		// big array of sprites
+		sprite sprites[5000];
+
 		/// this is called when we construct the class before everything is initialised.
 		tileEngine(int argc, char **argv) : app(argc, argv) {
 		}
@@ -45,9 +48,9 @@ namespace octet {
 			cameraToWorld.loadIdentity();
 			cameraToWorld.translate(0, 0, 3);
 
-			loadLevel("../../../assets/tileEngine/TestLevel/Dungeon.tmx");
+			loadLevel("../../../assets/tileEngine/TestLevel/Test.tmx");
 
-			testRender();
+			//testRender();
 		}
 
 		void testRender(){
@@ -68,7 +71,8 @@ namespace octet {
 			0, 1,
 			};*/
 
-			sprites[0].init(tileset1, 0, 0, 2, 4, uvs);
+			
+			sprites[0].init(tileset1, 0, 0, 2, 4, uvs, false);
 		}
 
 		void loadLevel(const char* pFilename){
@@ -97,21 +101,31 @@ namespace octet {
 
 					if (type == layerType){
 						printf("layer found \n", pChild->Value());
+						loadLayer(pChild);
 					}
 
 				}
 			}
 		}
 
+		void loadLayer(TiXmlNode* pChild)
+		{
+
+
+		}
+
 		void loadTileset(TiXmlNode* pChild)
 		{
 			tileset* set = new tileset();
+
+			int firstgid;
 			string name;
 			string imageSource;
 			int width = 0;
 			int height = 0;
 			int tileWidth = 0;
 			int tileHeight = 0;
+			int tileCount = 0;
 
 			TiXmlElement* element = pChild->ToElement();
 			TiXmlAttribute* pAttrib = element->FirstAttribute();
@@ -123,6 +137,10 @@ namespace octet {
 				//printf("\n");
 				string attName(pAttrib->Name());
 
+
+				if (attName.operator==("firstgid")){
+					firstgid = std::stoi(pAttrib->Value());
+				}
 				if (attName.operator==("name")){
 					name = pAttrib->Value();
 				}
@@ -131,6 +149,9 @@ namespace octet {
 				}
 				else if (attName.operator==("tileheight")){
 					tileHeight = std::stoi(pAttrib->Value());
+				}
+				else if (attName.operator==("tilecount")){
+					tileCount = std::stoi(pAttrib->Value());
 				}
 
 				pAttrib = pAttrib->Next();
@@ -159,7 +180,7 @@ namespace octet {
 				pAttrib = pAttrib->Next();
 			}
 
-			set->init(name, imageSource, width, height, tileWidth, tileHeight);
+			set->init(firstgid, name, imageSource, width, height, tileWidth, tileHeight, tileCount, sprites);
 			
 			tilesets.push_back(*set);
 		}
@@ -202,6 +223,7 @@ namespace octet {
 
 			// draw all the sprites
 			for (int i = 0; i != num_sprites; ++i) {
+				if (sprites[i].is_enabled())
 				sprites[i].render(texture_shader_, cameraToWorld);
 			}
 
