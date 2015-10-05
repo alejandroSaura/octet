@@ -82,23 +82,25 @@ namespace octet {
 
 		void drawLayer(layer* lay)
 		{
-			/*for (int i = 0; i < lay->tiles.size(); i++)
+			for (int i = 0; i < lay->tiles.size(); i++)
 			{
 				for (int j = 0; j < (lay->width)-1; j++)
 				{
-					sprites[lay->tiles[i][j]].translate(i*0.05f, j*0.05f);
-					sprites[lay->tiles[i][j]].enabled = true;
+					/*sprites[lay->tiles[i][j]].translate(i*0.05f, j*0.05f);
+					sprites[lay->tiles[i][j]].enabled = true;*/
+
+					sprites[lay->tiles[i][j]].instantiate(j*0.2f, -i*0.2f, &activeSprites);
 				}
-			}*/
+			}
 
 			//IMPORTANT: please, notice that you have initialized one instance of each sprite on each tileset...
 			//non-sense. Initialize sprites in the layer load!
 			//or maybe create a pool of active sprites (activeSprites), cloning them
 
 			
-			sprites[1120].instantiate(0, 0, &activeSprites);
+			/*sprites[1120].instantiate(0, 0, &activeSprites);
 			sprites[1120].instantiate(0, 0.2f, &activeSprites);
-			sprites[1120].instantiate(0, 0.4f, &activeSprites);
+			sprites[1120].instantiate(0, 0.4f, &activeSprites);*/
 
 			
 		}
