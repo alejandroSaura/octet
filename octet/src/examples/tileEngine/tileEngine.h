@@ -34,6 +34,9 @@ namespace octet {
 		// big array of sprites
 		sprite sprites[5000];
 
+		// big array of sprites
+		dynarray<sprite> activeSprites;
+
 		/// this is called when we construct the class before everything is initialised.
 		tileEngine(int argc, char **argv) : app(argc, argv) {
 		}
@@ -74,7 +77,7 @@ namespace octet {
 			};*/
 
 			
-			sprites[0].init(tileset1, 0, 0, 2, 4, uvs, false);
+			//sprites[0].init(tileset1, 0, 0, 2, 4, uvs, false);
 		}
 
 		void drawLayer(layer* lay)
@@ -88,8 +91,14 @@ namespace octet {
 				}
 			}*/
 
-			sprites[1120].translate(0, 0);
-			sprites[1120].enabled = true;
+			//IMPORTANT: please, notice that you have initialized one instance of each sprite on each tileset...
+			//non-sense. Initialize sprites in the layer load!
+			//or maybe create a pool of active sprites (activeSprites), cloning them
+
+			
+			sprites[1120].instantiate(0, 0, &activeSprites);
+			sprites[1120].instantiate(0, 0.2f, &activeSprites);
+			sprites[1120].instantiate(0, 0.4f, &activeSprites);
 
 			
 		}
@@ -293,10 +302,13 @@ namespace octet {
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			// draw all the sprites
-			for (int i = 0; i != num_sprites; ++i) {
-				if (sprites[i].is_enabled())
-				sprites[i].render(texture_shader_, cameraToWorld);
+			for (int i = 0; i != activeSprites.size(); ++i) {
+				if (activeSprites[i].is_enabled())
+				activeSprites[i].render(texture_shader_, cameraToWorld);
 			}
+
+			
+			
 
 			//sprites[1120].render(texture_shader_, cameraToWorld);
 

@@ -27,9 +27,8 @@ namespace octet {
 			enabled = true;
 		}
 
-		void init(int _texture, float x, float y, float w, float h, float uvs[8], bool en) {
-			modelToWorld.loadIdentity();
-			modelToWorld.translate(x, y, 0);
+		void init(int _texture, float w, float h, float uvs[8], bool en) {
+
 			halfWidth = w * 0.5f;
 			halfHeight = h * 0.5f;
 			for (int i = 0; i < 8; i++)
@@ -40,6 +39,17 @@ namespace octet {
 			texture = _texture;
 			enabled = en;
 		}
+
+		void instantiate(float x, float y, dynarray<sprite> *activeSprites)
+		{
+			//add a new instance to the pool of instantiated sprites
+			sprite *s = new sprite();
+			s->init(texture, halfWidth * 2, halfHeight * 2, uvCoord, true);
+			s->modelToWorld.loadIdentity();
+			s->modelToWorld.translate(x, y, 0);
+			activeSprites->push_back(*s);			
+		}
+
 
 		void render(texture_shader &shader, mat4t &cameraToWorld) {
 			// invisible sprite... used for gameplay.

@@ -73,7 +73,7 @@ namespace octet {
 					(x * tileWidth) / width, (y * tileHeight + tileHeight) / height
 				};
 
-				sprites[i].init(texture, 0, 0, TILE_WIDTH, TILE_HEIGHT, uvs, false);
+				sprites[i].init(texture, TILE_WIDTH, TILE_HEIGHT, uvs, false);
 
 				counter++;
 			}
