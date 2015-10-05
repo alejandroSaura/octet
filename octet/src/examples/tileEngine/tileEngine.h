@@ -9,7 +9,7 @@ using std::string;
 
 namespace octet {
 
-	
+
 
 	/// Scene containing a box with octet.
 	class tileEngine : public app {
@@ -50,6 +50,8 @@ namespace octet {
 
 			loadLevel("../../../assets/tileEngine/TestLevel/Test.tmx");
 
+
+
 			//testRender();
 		}
 
@@ -73,6 +75,23 @@ namespace octet {
 
 			
 			sprites[0].init(tileset1, 0, 0, 2, 4, uvs, false);
+		}
+
+		void drawLayer(layer* lay)
+		{
+			/*for (int i = 0; i < lay->tiles.size(); i++)
+			{
+				for (int j = 0; j < (lay->width)-1; j++)
+				{
+					sprites[lay->tiles[i][j]].translate(i*0.05f, j*0.05f);
+					sprites[lay->tiles[i][j]].enabled = true;
+				}
+			}*/
+
+			sprites[1120].translate(0, 0);
+			sprites[1120].enabled = true;
+
+			
 		}
 
 		void loadLevel(const char* pFilename){
@@ -110,6 +129,58 @@ namespace octet {
 
 		void loadLayer(TiXmlNode* pChild)
 		{
+			layer* lay = new layer();
+			string name;
+			int width = 0;
+			int height = 0;
+
+			TiXmlElement* element = pChild->ToElement();
+			TiXmlAttribute* pAttrib = element->FirstAttribute();
+
+			while (pAttrib)
+			{
+				//printf("%s: value=[%s]", pAttrib->Name(), pAttrib->Value());							
+				//printf("\n");
+				string attName(pAttrib->Name());
+				
+				if (attName.operator==("name")){
+					name = pAttrib->Value();
+				}
+				else if (attName.operator==("width")){
+					width = std::stoi(pAttrib->Value());
+				}
+				else if (attName.operator==("height")){
+					height = std::stoi(pAttrib->Value());
+				}				
+
+				pAttrib = pAttrib->Next();
+			}
+
+			lay->init(name, height, width);
+
+			TiXmlNode* pParent = pChild->FirstChild(); //data level (see TMX)
+
+			for (pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
+			{
+				element = pChild->ToElement();
+				pAttrib = element->FirstAttribute();
+
+				while (pAttrib)
+				{
+					//printf("%s: value=[%s]", pAttrib->Name(), pAttrib->Value());							
+					//printf("\n");
+					string attName(pAttrib->Name());
+
+					if (attName.operator==("gid")){
+						lay->pushTile(std::stoi(pAttrib->Value()));
+					}					
+
+					pAttrib = pAttrib->Next();
+				}
+			}
+
+			
+			drawLayer(lay);
 
 
 		}
@@ -223,11 +294,11 @@ namespace octet {
 
 			// draw all the sprites
 			for (int i = 0; i != num_sprites; ++i) {
-				//if (sprites[i].is_enabled())
-				//sprites[i].render(texture_shader_, cameraToWorld);
+				if (sprites[i].is_enabled())
+				sprites[i].render(texture_shader_, cameraToWorld);
 			}
 
-			sprites[65].render(texture_shader_, cameraToWorld);
+			//sprites[1120].render(texture_shader_, cameraToWorld);
 
 			char score_text[32];
 			//sprintf(score_text, "score: %d   lives: %d\n", score, num_lives);

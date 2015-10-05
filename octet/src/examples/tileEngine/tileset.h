@@ -1,5 +1,9 @@
 namespace octet {
 
+#define TILE_WIDTH  0.2
+#define TILE_HEIGHT  0.2
+
+
 	class tileset {
 
 		int firstgid;
@@ -58,8 +62,8 @@ namespace octet {
 				float frac = (float)counter / (float)horizontalTiles;
 				int whole = (int)frac;
 				float f = frac - (int)frac;
-				int y = verticalTiles - whole - 1;
-				int x = (int)(f * horizontalTiles + 0.5f);
+				int y = verticalTiles - whole -1;
+				int x = ((int)(f * horizontalTiles + 0.5f));
 
 				
 				float uvs[] = { //counter-clockwise; 0,0 is the bottom left.
@@ -69,7 +73,7 @@ namespace octet {
 					(x * tileWidth) / width, (y * tileHeight + tileHeight) / height
 				};
 
-				sprites[i].init(texture, 0, 0, 1, 1, uvs, true);
+				sprites[i].init(texture, 0, 0, TILE_WIDTH, TILE_HEIGHT, uvs, false);
 
 				counter++;
 			}

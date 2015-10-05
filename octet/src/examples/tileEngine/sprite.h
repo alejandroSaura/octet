@@ -17,9 +17,11 @@ namespace octet {
 		float uvCoord[8];
 		
 
+		
+	public:
 		// true if this sprite is enabled.
 		bool enabled;
-	public:
+
 		sprite() {
 			texture = 0;
 			enabled = true;

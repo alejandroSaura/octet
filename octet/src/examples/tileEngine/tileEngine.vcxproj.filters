@@ -439,6 +439,9 @@
     <ClInclude Include="tileset.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="layer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl">
