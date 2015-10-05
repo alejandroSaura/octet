@@ -26,6 +26,7 @@ namespace octet {
 		sprite sprites[num_sprites];
 
 		//tilesets
+		//octet::dynarray<tileset> tilesets;
 		std::vector<tileset> tilesets;
 
 
@@ -105,8 +106,8 @@ namespace octet {
 		void loadTileset(TiXmlNode* pChild)
 		{
 			tileset* set = new tileset();
-			const char* name;
-			const char* imageSource;
+			string name;
+			string imageSource;
 			int width = 0;
 			int height = 0;
 			int tileWidth = 0;
@@ -159,6 +160,7 @@ namespace octet {
 			}
 
 			set->init(name, imageSource, width, height, tileWidth, tileHeight);
+			
 			tilesets.push_back(*set);
 		}
 
