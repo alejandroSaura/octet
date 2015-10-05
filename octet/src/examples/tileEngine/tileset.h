@@ -9,11 +9,11 @@ namespace octet {
 
 		int tileCount;
 
-		int width;
-		int height;
+		float width;
+		float height;
 
-		int tileWidth;
-		int tileHeight;
+		float tileWidth;
+		float tileHeight;
 
 		int horizontalTiles;
 		int verticalTiles;		
@@ -31,10 +31,10 @@ namespace octet {
 			firstgid = fid;
 			name = nam;
 			imageSource = imSo;
-			width = w;
-			height = h;
-			tileWidth = tileW;
-			tileHeight = tileH;
+			width = (float)w;
+			height = (float)h;
+			tileWidth = (float)tileW;
+			tileHeight = (float)tileH;
 			tileCount = tileC;
 			sprites = s;
 			
@@ -52,16 +52,26 @@ namespace octet {
 
 		void populateSprites()
 		{
+			int counter = 0;
 			for (int i = firstgid; i < firstgid + tileCount; i++)
 			{
+				float frac = (float)counter / (float)horizontalTiles;
+				int whole = (int)frac;
+				float f = frac - (int)frac;
+				int y = verticalTiles - whole - 1;
+				int x = (int)(f * horizontalTiles + 0.5f);
+
+				
 				float uvs[] = { //counter-clockwise; 0,0 is the bottom left.
-					0, 0,
-					0.05f, 0,
-					0.05f, 2 * 0.01960784f,
-					0, 2 * 0.01960784f
+					(x * tileWidth)/width, (y * tileHeight)/height,
+					(x * tileWidth + tileWidth) / width, (y * tileHeight) / height,
+					(x * tileWidth + tileWidth) / width, (y * tileHeight + tileHeight) / height,
+					(x * tileWidth) / width, (y * tileHeight + tileHeight) / height
 				};
 
-				sprites[i].init(texture, 0, 0, 2, 4, uvs, false);
+				sprites[i].init(texture, 0, 0, 1, 1, uvs, true);
+
+				counter++;
 			}
 
 		}

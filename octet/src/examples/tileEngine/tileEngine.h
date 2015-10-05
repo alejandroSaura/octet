@@ -223,9 +223,11 @@ namespace octet {
 
 			// draw all the sprites
 			for (int i = 0; i != num_sprites; ++i) {
-				if (sprites[i].is_enabled())
-				sprites[i].render(texture_shader_, cameraToWorld);
+				//if (sprites[i].is_enabled())
+				//sprites[i].render(texture_shader_, cameraToWorld);
 			}
+
+			sprites[65].render(texture_shader_, cameraToWorld);
 
 			char score_text[32];
 			//sprintf(score_text, "score: %d   lives: %d\n", score, num_lives);
