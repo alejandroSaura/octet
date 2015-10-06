@@ -22,19 +22,20 @@ namespace octet {
 		texture_shader texture_shader_;
 
 		int num_sprites = 5000;
-		
 
-		//tilesets
-		//octet::dynarray<tileset> tilesets;
+
+		//tilesets		
 		std::vector<tileset> tilesets;
+		//layers
+		std::vector<layer> layers;
 
 
 	public:
 
-		// big array of sprites
+		// library of sprites
 		sprite sprites[5000];
 
-		// big array of sprites
+		// instanced sprites
 		dynarray<sprite> activeSprites;
 
 		/// this is called when we construct the class before everything is initialised.
@@ -53,58 +54,29 @@ namespace octet {
 
 			loadLevel("../../../assets/tileEngine/TestLevel/Test.tmx");
 
-
-
-			//testRender();
+			//draw all layers
+			for (std::vector<layer>::size_type i = 0; i != layers.size(); i++) {
+				drawLayer(&layers[i]);				
+			}
 		}
 
-		void testRender(){
-			//sprite rendering test:
-			GLuint tileset1 = resource_dict::get_texture_handle(GL_RGBA, "assets/tileEngine/Objects/Wall.gif");
-
-			float uvs[] = { //counter-clockwise; 0,0 is the bottom left.
-				0, 0,
-				0.05f, 0,
-				0.05f, 2 * 0.01960784f,
-				0, 2 * 0.01960784f
-			};
-
-			/*float uvs[] = {
-			0, 0,
-			1, 0,
-			1, 1,
-			0, 1,
-			};*/
-
-			
-			//sprites[0].init(tileset1, 0, 0, 2, 4, uvs, false);
-		}
-
+		//load and instantiate all sprites of a given layer
 		void drawLayer(layer* lay)
 		{
 			for (int i = 0; i < lay->tiles.size(); i++)
 			{
-				for (int j = 0; j < (lay->width)-1; j++)
+				for (int j = 0; j < (lay->width) - 1; j++)
 				{
-					/*sprites[lay->tiles[i][j]].translate(i*0.05f, j*0.05f);
-					sprites[lay->tiles[i][j]].enabled = true;*/
+					//first we load the sprite in the sprite library
 					loadSprite(lay->tiles[i][j]);
+					//now we copy the sprite from the library to the active sprites array
 					sprites[lay->tiles[i][j]].instantiate(j*0.2f, -i*0.2f, &activeSprites);
 				}
-			}
-
-			//IMPORTANT: please, notice that you have initialized one instance of each sprite on each tileset...
-			//non-sense. Initialize sprites in the layer load!
-			//or maybe create a pool of active sprites (activeSprites), cloning them
-
-			
-			/*sprites[1120].instantiate(0, 0, &activeSprites);
-			sprites[1120].instantiate(0, 0.2f, &activeSprites);
-			sprites[1120].instantiate(0, 0.4f, &activeSprites);*/
-
-			
+			}			
 		}
 
+		//Extracts the information from the TMX, creating as many tileset classes
+		//and layers as necessary.
 		void loadLevel(const char* pFilename){
 
 			TiXmlDocument levelTMX;
@@ -133,11 +105,31 @@ namespace octet {
 						printf("layer found \n", pChild->Value());
 						loadLayer(pChild);
 					}
-
 				}
 			}
 		}
 
+		//Load the TMX Dom tree thanks to the TinyXML lib
+		TiXmlDocument loadTMX(const char* pFilename){
+
+			TiXmlDocument doc(pFilename);
+			bool tmxLoaded = doc.LoadFile();
+
+			if (tmxLoaded)
+			{
+				printf("\nfile loaded: %s\n", pFilename);
+				//dump_to_stdout(&doc);
+				return doc;
+			}
+			else
+			{
+				printf("Failed to load TMX file \"%s\"\n", pFilename);
+				return nullptr;
+			}
+
+		}
+
+		//fills a tileset class with all the tileset info of the TMX
 		void loadLayer(TiXmlNode* pChild)
 		{
 			layer* lay = new layer();
@@ -153,7 +145,7 @@ namespace octet {
 				//printf("%s: value=[%s]", pAttrib->Name(), pAttrib->Value());							
 				//printf("\n");
 				string attName(pAttrib->Name());
-				
+
 				if (attName.operator==("name")){
 					name = pAttrib->Value();
 				}
@@ -162,7 +154,7 @@ namespace octet {
 				}
 				else if (attName.operator==("height")){
 					height = std::stoi(pAttrib->Value());
-				}				
+				}
 
 				pAttrib = pAttrib->Next();
 			}
@@ -184,18 +176,19 @@ namespace octet {
 
 					if (attName.operator==("gid")){
 						lay->pushTile(std::stoi(pAttrib->Value()));
-					}					
+					}
 
 					pAttrib = pAttrib->Next();
 				}
 			}
 
-			
-			drawLayer(lay);
+			layers.push_back(*lay);
+			//drawLayer(lay);
 
 
 		}
 
+		//fills a tileset class with all the tileset info of the TMX
 		void loadTileset(TiXmlNode* pChild)
 		{
 			tileset* set = new tileset();
@@ -263,10 +256,11 @@ namespace octet {
 			}
 
 			set->init(firstgid, name, imageSource, width, height, tileWidth, tileHeight, tileCount, sprites);
-			
+
 			tilesets.push_back(*set);
 		}
 
+		//load the sprite in library, accessing its tileset.
 		void loadSprite(int id)
 		{
 			for (std::vector<tileset>::size_type i = 0; i != tilesets.size(); i++) {
@@ -275,26 +269,7 @@ namespace octet {
 					return;
 				}
 			}
-		}
-
-		TiXmlDocument loadTMX(const char* pFilename){
-
-			TiXmlDocument doc(pFilename);
-			bool tmxLoaded = doc.LoadFile();
-
-			if (tmxLoaded)
-			{
-				printf("\nfile loaded: %s\n", pFilename);
-				//dump_to_stdout(&doc);
-				return doc;
-			}
-			else
-			{
-				printf("Failed to load TMX file \"%s\"\n", pFilename);
-				return nullptr;
-			}
-
-		}
+		}		
 
 		/// this is called to draw the world
 		void draw_world(int x, int y, int w, int h) {
@@ -316,13 +291,8 @@ namespace octet {
 			// draw all the sprites
 			for (int i = 0; i != activeSprites.size(); ++i) {
 				if (activeSprites[i].is_enabled())
-				activeSprites[i].render(texture_shader_, cameraToWorld);
-			}
-
-			
-			
-
-			//sprites[1120].render(texture_shader_, cameraToWorld);
+					activeSprites[i].render(texture_shader_, cameraToWorld);
+			}			
 
 			char score_text[32];
 			//sprintf(score_text, "score: %d   lives: %d\n", score, num_lives);

@@ -15,9 +15,7 @@ namespace octet {
 
 		//uv coordinates
 		float uvCoord[8];
-		
 
-		
 	public:
 		// true if this sprite is enabled.
 		bool enabled;
@@ -40,6 +38,7 @@ namespace octet {
 			enabled = en;
 		}
 
+		//copies the sprite from the library to the active array
 		void instantiate(float x, float y, dynarray<sprite> *activeSprites)
 		{
 			//add a new instance to the pool of instantiated sprites
