@@ -33,6 +33,8 @@ namespace octet {
 		// library of sprites
 		sprite sprites[5000];
 
+		sprite player;
+
 		// instanced sprites
 		dynarray<sprite> activeSprites;
 
@@ -56,6 +58,9 @@ namespace octet {
 			for (std::vector<layer>::size_type i = 0; i != layers.size(); i++) {
 				drawLayer(&layers[i]);				
 			}
+
+			
+
 		}
 
 		// called every frame to move things

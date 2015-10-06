@@ -16,6 +16,7 @@
 #include "sprite.h"
 #include "tileset.h"
 #include "layer.h"
+#include "character.h"
 #include "tileEngine.h"
 
 

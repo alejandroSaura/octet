@@ -216,6 +216,7 @@
     <ClInclude Include="..\..\shaders\shaders.h" />
     <ClInclude Include="..\..\shaders\texture_shader.h" />
     <ClInclude Include="layer.h" />
+    <ClInclude Include="character.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="tileEngine.h" />
     <ClInclude Include="tileset.h" />
