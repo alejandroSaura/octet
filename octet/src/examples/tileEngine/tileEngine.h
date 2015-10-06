@@ -88,7 +88,7 @@ namespace octet {
 				{
 					/*sprites[lay->tiles[i][j]].translate(i*0.05f, j*0.05f);
 					sprites[lay->tiles[i][j]].enabled = true;*/
-
+					loadSprite(lay->tiles[i][j]);
 					sprites[lay->tiles[i][j]].instantiate(j*0.2f, -i*0.2f, &activeSprites);
 				}
 			}
@@ -265,6 +265,16 @@ namespace octet {
 			set->init(firstgid, name, imageSource, width, height, tileWidth, tileHeight, tileCount, sprites);
 			
 			tilesets.push_back(*set);
+		}
+
+		void loadSprite(int id)
+		{
+			for (std::vector<tileset>::size_type i = 0; i != tilesets.size(); i++) {
+				if (tilesets[i].loadSprite(id))
+				{
+					return;
+				}
+			}
 		}
 
 		TiXmlDocument loadTMX(const char* pFilename){

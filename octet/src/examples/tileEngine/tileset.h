@@ -51,21 +51,24 @@ namespace octet {
 			route += imageSource;
 			texture = resource_dict::get_texture_handle(GL_RGBA, route.c_str());
 
-			populateSprites();
+			//populateSprites();
 		}
 
-		void populateSprites()
+		//This function filled the engine sprites array with 
+		//the tileSet's sprites. It a waste of memory though, cause they may not be needed.
+		//Now it only loads those who are needed.
+		bool loadSprite(int id)
 		{
-			int counter = 0;
-			for (int i = firstgid; i < firstgid + tileCount; i++)
+			if (id >= firstgid && id <= firstgid + tileCount)
 			{
-				float frac = (float)counter / (float)horizontalTiles;
+				int counter = id - firstgid;
+				//this tileset contains the sprite
+				float frac = (float)(counter) / (float)horizontalTiles;
 				int whole = (int)frac;
 				float f = frac - (int)frac;
 				int y = verticalTiles - whole -1;
 				int x = ((int)(f * horizontalTiles + 0.5f));
 
-				
 				float uvs[] = { //counter-clockwise; 0,0 is the bottom left.
 					(x * tileWidth)/width, (y * tileHeight)/height,
 					(x * tileWidth + tileWidth) / width, (y * tileHeight) / height,
@@ -73,10 +76,36 @@ namespace octet {
 					(x * tileWidth) / width, (y * tileHeight + tileHeight) / height
 				};
 
-				sprites[i].init(texture, TILE_WIDTH, TILE_HEIGHT, uvs, false);
+				sprites[id].init(texture, TILE_WIDTH, TILE_HEIGHT, uvs, false);
 
-				counter++;
 			}
+			else
+			{
+				//the sprite is not in this tileset
+				return false;
+			}
+
+			//int counter = 0;
+			//for (int i = firstgid; i < firstgid + tileCount; i++)
+			//{
+			//	float frac = (float)counter / (float)horizontalTiles;
+			//	int whole = (int)frac;
+			//	float f = frac - (int)frac;
+			//	int y = verticalTiles - whole -1;
+			//	int x = ((int)(f * horizontalTiles + 0.5f));
+
+			//	
+			//	float uvs[] = { //counter-clockwise; 0,0 is the bottom left.
+			//		(x * tileWidth)/width, (y * tileHeight)/height,
+			//		(x * tileWidth + tileWidth) / width, (y * tileHeight) / height,
+			//		(x * tileWidth + tileWidth) / width, (y * tileHeight + tileHeight) / height,
+			//		(x * tileWidth) / width, (y * tileHeight + tileHeight) / height
+			//	};
+
+			//	sprites[i].init(texture, TILE_WIDTH, TILE_HEIGHT, uvs, false);
+
+			//	counter++;
+			//}
 
 		}
 
