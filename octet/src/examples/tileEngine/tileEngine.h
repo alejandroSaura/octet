@@ -9,8 +9,6 @@ using std::string;
 
 namespace octet {
 
-
-
 	/// Scene containing a box with octet.
 	class tileEngine : public app {
 
