@@ -12,6 +12,8 @@ namespace octet {
 	/// Scene containing a box with octet.
 	class tileEngine : public app {
 
+		int numFrames = 0;
+
 		// Matrix to transform points in our camera space to the world.
 		// This lets us move our camera
 		mat4t cameraToWorld;
@@ -21,6 +23,10 @@ namespace octet {
 
 		int num_sprites = 5000;
 
+		character player;
+
+		//how many frames between pose and pose
+		int animationRate = 10;
 
 		//tilesets		
 		std::vector<tileset> tilesets;
@@ -33,7 +39,7 @@ namespace octet {
 		// library of sprites
 		sprite sprites[5000];
 
-		sprite player;
+		
 
 		// instanced sprites
 		dynarray<sprite> activeSprites;
@@ -59,13 +65,27 @@ namespace octet {
 				drawLayer(&layers[i]);				
 			}
 
-			
+			//first sprite (top left) of the character sheet
+			float uvs[8] = {
+				0, 0.875,
+				0.076f, 0.875f,
+				0.076f, 1,
+				0, 1
+			};
+
+			player.loadCharacter("assets/tileEngine/Characters/TerraSheet.gif", 0, 0, 0.2f, 0.2f, uvs, 0.082f, 0.125f, true);
 
 		}
 
 		// called every frame to move things
 		void simulate() {
+			numFrames++;
+
 			movePlayer();
+			if (numFrames%animationRate == 0)
+			{
+				player.animateCharacter();
+			}
 		}
 
 		void movePlayer()
@@ -317,9 +337,12 @@ namespace octet {
 
 			// draw all the sprites
 			for (int i = 0; i != activeSprites.size(); ++i) {
-				if (activeSprites[i].is_enabled())
+				if (activeSprites[i].is_enabled()){
 					activeSprites[i].render(texture_shader_, cameraToWorld);
+				}
 			}			
+
+			player.render(texture_shader_, cameraToWorld);
 
 			char score_text[32];
 			//sprintf(score_text, "score: %d   lives: %d\n", score, num_lives);
