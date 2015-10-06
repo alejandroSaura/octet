@@ -58,6 +58,29 @@ namespace octet {
 			}
 		}
 
+		// called every frame to move things
+		void simulate() {
+			movePlayer();
+		}
+
+		void movePlayer()
+		{
+			const float speed = 0.05f;
+			// left and right arrows
+			if (is_key_down(key_left)) {
+				cameraToWorld.translate(-speed, 0, 0);
+			}
+			else if (is_key_down(key_right)) {
+				cameraToWorld.translate(speed, 0, 0);
+			}
+			else if (is_key_down(key_up)) {
+				cameraToWorld.translate(0, speed, 0);
+			}
+			else if (is_key_down(key_down)) {
+				cameraToWorld.translate(0, -speed, 0);
+			}
+		}
+
 		//load and instantiate all sprites of a given layer
 		void drawLayer(layer* lay)
 		{
@@ -272,6 +295,7 @@ namespace octet {
 		/// this is called to draw the world
 		void draw_world(int x, int y, int w, int h) {
 
+			simulate();
 			// set a viewport - includes whole window area
 			glViewport(x, y, w, h);
 
