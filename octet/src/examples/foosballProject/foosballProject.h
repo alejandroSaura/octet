@@ -68,7 +68,7 @@ namespace octet {
 
 	  vec3 position = camNode->get_position();
 	  
-	  printf("cam position: %f, %f, %f \n", position.x(), position.y(), position.z());
+	  //printf("cam position: %f, %f, %f \n", position.x(), position.y(), position.z());
 	  
       
     }

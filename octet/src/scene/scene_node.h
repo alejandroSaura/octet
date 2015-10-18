@@ -24,6 +24,9 @@ namespace octet { namespace scene {
     // sid used to target animations
     atom_t sid;
 
+	//Id used to look for it
+	int id;
+
     // is this node and all its children renderable?
     bool enabled;
 
@@ -51,6 +54,16 @@ namespace octet { namespace scene {
     void add_ref() {
       resource::add_ref();
     }
+
+	int getId()
+	{
+		return id;
+	}
+
+	void setId(int i)
+	{
+		id = i;
+	}
 
     /// the virtual release on animation_target gets passed to here and we pass iton (delegate it) to the resource
     void release() {
