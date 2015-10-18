@@ -70,7 +70,7 @@ namespace octet
 					transformMatrix.translate(posX, posY, -posZ);
 					transformMatrix.rotateX(-rotX);
 					transformMatrix.rotateY(-rotY);
-					transformMatrix.rotateZ(rotZ);
+					transformMatrix.rotateZ(-rotZ);
 
 					material *mat = new material(vec4(1, 0, 0, 1)); //TO-DO: import materials
 
@@ -129,12 +129,12 @@ namespace octet
 					rotZ = atof(element->GetText());
 
 
-					mat4t transformMatrix;
+					/*mat4t transformMatrix;
 					transformMatrix.loadIdentity();
 					transformMatrix.translate(posX, posY, posZ);
 					transformMatrix.rotateX(rotX);
 					transformMatrix.rotateY(rotY);
-					transformMatrix.rotateZ(rotZ);
+					transformMatrix.rotateZ(rotZ);*/
 					
 					//camera_instance* cam = scene->get_camera_instance(0);
 					//scene_node* node = cam->get_node();
@@ -155,9 +155,13 @@ namespace octet
 					
 					node->access_nodeToParent().translate(vec3(posX, posY, -posZ));
 					
-					node->access_nodeToParent().rotateX(-rotX);
+					/*node->access_nodeToParent().rotateX(-rotX);
 					node->access_nodeToParent().rotateY(-rotY);
-					node->access_nodeToParent().rotateZ(rotZ);
+					node->access_nodeToParent().rotateZ(rotZ);*/
+
+					node->rotate(-rotX, vec3(1, 0, 0));
+					node->rotate(-rotY, vec3(0, 1, 0));
+					node->rotate(rotZ, vec3(0, 0, 1));
 
 				}
 			}

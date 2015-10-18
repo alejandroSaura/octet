@@ -42,8 +42,8 @@ namespace octet {
 
 	  if (is_key_down(key_left)) 
 	  {
-		  //camNode->translate(vec3(-0.5f, 0, 0));
-		  camNode->rotate(5, vec3(0, 0, 1));
+		  camNode->translate(vec3(-0.5f, 0, 0));
+		  //camNode->rotate(5, vec3(0, 0, 1));
 	  }
 	  if (is_key_down(key_right))
 	  {
