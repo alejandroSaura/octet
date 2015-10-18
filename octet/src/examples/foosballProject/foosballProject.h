@@ -65,19 +65,19 @@ namespace octet {
 	  }
 	  if (is_key_down(key_up))
 	  {
-		  camNode->translate(vec3(0, 0.15f, 0));
+		  camNode->translate(vec3(0, 0, -0.15f));
 	  }
 	  if (is_key_down(key_down))
 	  {
-		  camNode->translate(vec3(0, -0.15f, 0));
+		  camNode->translate(vec3(0, 0, 0.15f));
 	  }
 	  if (is_key_down(key_backspace))
 	  {
-		  camNode->translate(vec3(0, 0, 0.15f));
+		  camNode->translate(vec3(0, 0.15f, 0));
 	  }
 	  if (is_key_down(key_alt))
 	  {
-		  camNode->translate(vec3(0, 0, -0.15f));
+		  camNode->translate(vec3(0, -0.15f, 0));
 	  }
 
 	  //vec3 position = camNode->get_position();	  
