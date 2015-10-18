@@ -88,7 +88,7 @@ namespace octet
 					{
 						mesh_sphere *sphere = new mesh_sphere(vec3(posX, posY, -posZ), scaleX/2);
 						scene->add_geometry(transformMatrix, sphere, mat, id);
-						//scene->add_shape(transformMatrix, sphere, mat, false);
+						//scene->add_shape(transformMatrix, sphere, mat, true);
 					}
 
 				}
@@ -151,7 +151,7 @@ namespace octet
 						node->access_nodeToParent().rotateY(-rotY);
 						node->access_nodeToParent().rotateZ(-rotZ);*/
 						_light->set_color(vec4(colorR, colorG, colorB, 1));							
-						_light->set_kind(atom_point);
+						_light->set_kind(atom_spot);
 						li->set_node(node);
 						li->set_light(_light);
 						scene->add_light_instance(li);
@@ -204,13 +204,15 @@ namespace octet
 					cam->set_perspective(0, 45, 1, n, f);
 					scene->add_camera_instance(cam);
 
-					scene->create_default_camera_and_lights();					
-					
-					node->access_nodeToParent().translate(vec3(posX, posY, -posZ));					
+					//scene->create_default_camera_and_lights();					
 
-					node->rotate(rotX, vec3(1, 0, 0));
-					node->rotate(-rotY, vec3(0, 1, 0));
-					node->rotate(-rotZ, vec3(0, 0, 1));
+					mat4t &cameraToWorld = node->access_nodeToParent();
+					cameraToWorld.translate(vec3(posX, posY, -posZ));
+
+					cameraToWorld.rotateY(-rotY);
+					cameraToWorld.rotateX(-rotX);
+					cameraToWorld.rotateZ(rotZ);
+
 
 				}
 			}
@@ -225,18 +227,17 @@ namespace octet
 					int id;
 					bool kinematic;
 
-
 					TiXmlElement* element;
 
 					string b = child->FirstChildElement("Kinematic")->GetText();
 					kinematic = b.operator==("true");
-					//bool b = str == "1";
+
+					if (!kinematic) printf("non kinematic rigidbody found\n");					
 
 					element = child->FirstChildElement("nodeId");
 					id = atof(element->GetText());
-
-					scene_node *n = scene->getNode(id);
-					scene->add_rigidbody(n, !kinematic, 1);
+										
+					scene->add_rigidbody(id, !kinematic);
 				}
 			}
 

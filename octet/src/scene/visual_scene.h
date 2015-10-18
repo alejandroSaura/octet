@@ -311,31 +311,45 @@ namespace octet { namespace scene {
 	mesh_instance *add_geometry(mat4t_in mat, mesh *msh, material *mtl, int identifier)
 	{
 		scene_node *node = new scene_node(this);
-		node->access_nodeToParent() = mat;
-
 		node->setId(identifier);
+		node->access_nodeToParent() = mat;		
 
 		mesh_instance *result = NULL;
 		if (msh && mtl) {
-			result = new mesh_instance(node, msh, mtl);
+			result = new mesh_instance(node, msh, mtl);			
 			add_mesh_instance(result);
 		}
 		return result;
 	}
 
-	void add_rigidbody(scene_node *node, bool is_dynamic = false, float mass = 1, collison_shape_t *shape = NULL)
+	void add_rigidbody(int id, bool is_dynamic = false, float mass = 1, collison_shape_t *shape = NULL)
 	{
 	#ifdef OCTET_BULLET
 
-		mat4t_in mat = node->access_nodeToParent();
-		mesh_instance *mshI = (*((octet::scene::visual_scene*)(node->get_parent()))).mesh_instances[0];
+		scene_node *node;				
+
+		mesh_instance *mshI;
+		for (unsigned int i = 0; i<mesh_instances.size(); i++) {
+			scene_node *n = mesh_instances[i]->get_node();
+			if (n->getId() == id)
+			{
+				mshI = mesh_instances[i];
+				node = n;
+				break;
+			}
+		}
+
+		//mesh_instance *mshI = (*((octet::scene::visual_scene*)(node->get_parent()))).mesh_instances[0];
 		mesh *msh = mshI->get_mesh();
+
+		mat4t_in mat = node->access_nodeToParent();
 
 		btMatrix3x3 matrix(get_btMatrix3x3(mat));
 		btVector3 pos(get_btVector3(mat[3].xyz()));
 
 		if (shape == NULL) {
-			shape = is_dynamic ? msh->get_bullet_shape() : msh->get_static_bullet_shape();
+			//shape = is_dynamic ? msh->get_bullet_shape() : msh->get_static_bullet_shape();
+			shape = msh->get_static_bullet_shape();
 		}
 
 		if (shape) {

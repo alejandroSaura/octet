@@ -13,6 +13,8 @@ namespace octet {
 	camera_instance* cam;
 	scene_node* camNode;
 
+	octet::mouse_look mouse_look_helper;
+
   public:
     /// this is called when we construct the class before everything is initialised.
     foosballProject(int argc, char **argv) : app(argc, argv) {
@@ -26,6 +28,18 @@ namespace octet {
 	  loader->loadScene(scene, "LevelData.xml");
 	  cam = scene->get_camera_instance(0);
 	  camNode = cam->get_node();
+
+	  mouse_look_helper.init(this, 200.0f / 360.0f, false);
+	  
+	  
+	  material *blue = new material(vec4(0, 0, 1, 1));
+	  mat4t mat;
+	  mat.translate(0, 2, 0);
+	  scene->add_shape(mat, new mesh_sphere(vec3(0, 0, 0), 1), blue, true);
+
+	  mat.translate(0, 2, 0);
+	  scene->add_shape(mat, new mesh_sphere(vec3(0, 0, 0), 1), blue, true);
+
     }
 
     /// this is called to draw the world
@@ -42,34 +56,36 @@ namespace octet {
 
 	  if (is_key_down(key_left)) 
 	  {
-		  camNode->translate(vec3(-0.5f, 0, 0));
+		  camNode->translate(vec3(-0.15f, 0, 0));
 		  //camNode->rotate(5, vec3(0, 0, 1));
 	  }
 	  if (is_key_down(key_right))
 	  {
-		  camNode->translate(vec3(0.5f, 0, 0));
+		  camNode->translate(vec3(0.15f, 0, 0));
 	  }
 	  if (is_key_down(key_up))
 	  {
-		  camNode->translate(vec3(0, 0.5f, 0));
+		  camNode->translate(vec3(0, 0.15f, 0));
 	  }
 	  if (is_key_down(key_down))
 	  {
-		  camNode->translate(vec3(0, -0.5f, 0));
+		  camNode->translate(vec3(0, -0.15f, 0));
 	  }
 	  if (is_key_down(key_backspace))
 	  {
-		  camNode->translate(vec3(0, 0, 0.5f));
+		  camNode->translate(vec3(0, 0, 0.15f));
 	  }
 	  if (is_key_down(key_alt))
 	  {
-		  camNode->translate(vec3(0, 0, -0.5f));
+		  camNode->translate(vec3(0, 0, -0.15f));
 	  }
 
-	  vec3 position = camNode->get_position();
-	  
+	  //vec3 position = camNode->get_position();	  
 	  //printf("cam position: %f, %f, %f \n", position.x(), position.y(), position.z());
-	  
+
+	  scene_node *camera_node = cam->get_node();
+	  mat4t &camera_to_world = camera_node->access_nodeToParent();
+	  mouse_look_helper.update(camera_to_world); 
       
     }
   };
