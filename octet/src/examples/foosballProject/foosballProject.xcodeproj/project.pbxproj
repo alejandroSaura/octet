@@ -27,7 +27,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		813E369619EB374400E122B9 /* newExampleProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = newExampleProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		813E369619EB374400E122B9 /* foosballProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = foosballProject; sourceTree = BUILT_PRODUCTS_DIR; };
 		813E36A719EB381300E122B9 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
 		813E36AA19EB39D900E122B9 /* octet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = octet.h; path = ../../octet.h; sourceTree = "<group>"; };
 		81E4F20C19EB3ECD00EACF8C /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
@@ -63,7 +63,7 @@
 				81E4F21019EB3EDB00EACF8C /* OpenGL.framework */,
 				81E4F20E19EB3ED300EACF8C /* OpenCL.framework */,
 				81E4F20C19EB3ECD00EACF8C /* OpenAL.framework */,
-				813E369919EB374400E122B9 /* newExampleProject */,
+				813E369919EB374400E122B9 /* foosballProject */,
 				813E369719EB374400E122B9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -71,12 +71,12 @@
 		813E369719EB374400E122B9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				813E369619EB374400E122B9 /* newExampleProject */,
+				813E369619EB374400E122B9 /* foosballProject */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		813E369919EB374400E122B9 /* newExampleProject */ = {
+		813E369919EB374400E122B9 /* foosballProject */ = {
 			isa = PBXGroup;
 			children = (
 				81E4F21819EB44E700EACF8C /* platform */,
@@ -87,15 +87,15 @@
 				81E4F21419EB42BF00EACF8C /* scene */,
 				813E36A719EB381300E122B9 /* main.cpp */,
 			);
-			path = newExampleProject;
+			path = foosballProject;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		813E369519EB374400E122B9 /* newExampleProject */ = {
+		813E369519EB374400E122B9 /* foosballProject */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 813E36A019EB374400E122B9 /* Build configuration list for PBXNativeTarget "newExampleProject" */;
+			buildConfigurationList = 813E36A019EB374400E122B9 /* Build configuration list for PBXNativeTarget "foosballProject" */;
 			buildPhases = (
 				813E369219EB374400E122B9 /* Sources */,
 				813E369319EB374400E122B9 /* Frameworks */,
@@ -105,9 +105,9 @@
 			);
 			dependencies = (
 			);
-			name = newExampleProject;
-			productName = newExampleProject;
-			productReference = 813E369619EB374400E122B9 /* newExampleProject */;
+			name = foosballProject;
+			productName = foosballProject;
+			productReference = 813E369619EB374400E122B9 /* foosballProject */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -119,7 +119,7 @@
 				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = "Andy Thomason";
 			};
-			buildConfigurationList = 813E369019EB374400E122B9 /* Build configuration list for PBXProject "newExampleProject" */;
+			buildConfigurationList = 813E369019EB374400E122B9 /* Build configuration list for PBXProject "foosballProject" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -131,7 +131,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				813E369519EB374400E122B9 /* newExampleProject */,
+				813E369519EB374400E122B9 /* foosballProject */,
 			);
 		};
 /* End PBXProject section */
@@ -224,7 +224,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		813E369019EB374400E122B9 /* Build configuration list for PBXProject "newExampleProject" */ = {
+		813E369019EB374400E122B9 /* Build configuration list for PBXProject "foosballProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				813E369E19EB374400E122B9 /* Debug */,
@@ -233,7 +233,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		813E36A019EB374400E122B9 /* Build configuration list for PBXNativeTarget "newExampleProject" */ = {
+		813E36A019EB374400E122B9 /* Build configuration list for PBXNativeTarget "foosballProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				813E36A119EB374400E122B9 /* Debug */,

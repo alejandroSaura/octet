@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6722CC8F-3FC9-4B11-B7AE-918054DD5ACA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>newExampleProject</RootNamespace>
+    <RootNamespace>foosballProject</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -59,7 +59,6 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>D:\Octet\octet\open_source\bullet;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -216,7 +215,8 @@
     <ClInclude Include="..\..\shaders\shader.h" />
     <ClInclude Include="..\..\shaders\shaders.h" />
     <ClInclude Include="..\..\shaders\texture_shader.h" />
-    <ClInclude Include="newExampleProject.h" />
+    <ClInclude Include="foosballProject.h" />
+    <ClInclude Include="sceneLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl" />

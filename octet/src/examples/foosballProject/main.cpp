@@ -10,8 +10,10 @@
 #define OCTET_BULLET 1
 
 #include "../../octet.h"
-#include "btBulletDynamicsCommon.h"
-#include "newExampleProject.h"
+
+
+#include "sceneLoader.h"
+#include "foosballProject.h"
 
 /// Create a box with octet
 int main(int argc, char **argv) {
@@ -19,7 +21,7 @@ int main(int argc, char **argv) {
   octet::app::init_all(argc, argv);
 
   // our application.
-  octet::newExampleProject app(argc, argv);
+  octet::foosballProject app(argc, argv);
   app.init();
 
   // open windows

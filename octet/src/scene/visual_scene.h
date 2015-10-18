@@ -391,7 +391,7 @@ namespace octet { namespace scene {
         camera_instance *cam = new camera_instance();
         float bb_size = length(bb.get_half_extent()) * 2.0f;
         float distance = max(bb.get_max().z(), bb_size) * 2;
-        node->access_nodeToParent().translate(0, 0, distance);
+        node->access_nodeToParent().translate(0, 0, 0);
         float f = distance * 2, n = f * 0.001f;
         cam->set_node(node);
         cam->set_perspective(0, 45, 1, n, f);
@@ -404,8 +404,8 @@ namespace octet { namespace scene {
         light *_light = new light();
         light_instance *li = new light_instance();
         node->access_nodeToParent().translate(100, 100, 100);
-        node->access_nodeToParent().rotateX(45);
-        node->access_nodeToParent().rotateY(45);
+        node->access_nodeToParent().rotateX(-45);
+        node->access_nodeToParent().rotateY(-45);
         _light->set_color(vec4(1, 1, 1, 1));
         _light->set_kind(atom_directional);
         li->set_node(node);
