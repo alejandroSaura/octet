@@ -223,14 +223,20 @@ namespace octet
 					printf("RigidBody object found\n");
 
 					int id;
+					bool kinematic;
+
 
 					TiXmlElement* element;
+
+					string b = child->FirstChildElement("Kinematic")->GetText();
+					kinematic = b.operator==("true");
+					//bool b = str == "1";
 
 					element = child->FirstChildElement("nodeId");
 					id = atof(element->GetText());
 
 					scene_node *n = scene->getNode(id);
-					scene->add_rigidbody(n, true, 1);
+					scene->add_rigidbody(n, !kinematic, 1);
 				}
 			}
 
