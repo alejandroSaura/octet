@@ -72,17 +72,37 @@ namespace octet
 
 
 					mat4t transformMatrix;
+					transformMatrix.loadIdentity();
 					transformMatrix.translate(posX, posY, -posZ);
-					transformMatrix.rotateX(-rotX);
-					transformMatrix.rotateY(-rotY);
-					transformMatrix.rotateZ(-rotZ);
+
+					mat4t transformMatrixInv;
+					transformMatrix.invertQuick(transformMatrixInv);
+
+					vec4 localUp = vec4(0, 1, 0, 0) * transformMatrixInv;					
+					transformMatrix.rotate(-rotY, localUp.x(), localUp.y(), localUp.z());
+
+					transformMatrix.invertQuick(transformMatrixInv);
+
+					vec4 localForward = vec4(0, 0, 1, 0) * transformMatrixInv;
+					transformMatrix.rotate(-rotZ, localForward.x(), localForward.y(), localForward.z());
+
+					transformMatrix.invertQuick(transformMatrixInv);
+
+					vec4 localRight = vec4(1, 0, 0, 0) * transformMatrixInv;
+					transformMatrix.rotate(-rotX, localRight.x(), localRight.y(), localRight.z());
+
+
+					//transformMatrix.rotateX(-rotX);
+					//transformMatrix.rotateY(-rotY);
+					////transformMatrix.rotateZ(-rotZ);
+					//transformMatrix.rotate(-rotZ, 0, 0, 1);
 
 					material *mat = new material(vec4(1, 0, 0, 1)); //TO-DO: import materials
 
 					if (type.operator==("Cube"))
 					{
 						//scene->add_shape(transformMatrix, new mesh_box(vec3(scaleX / 2, scaleY / 2, scaleZ / 2)), mat, false);
-						scene->add_geometry(transformMatrix, new mesh_box(vec3(scaleX / 2, scaleY / 2, scaleZ / 2)), mat, id);						
+						scene->add_geometry(transformMatrix, new mesh_box(vec3(scaleX / 2, scaleY / 2, scaleZ / 2)), mat, id);							
 					}
 					else if (type.operator==("Sphere"))
 					{

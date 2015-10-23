@@ -32,13 +32,13 @@ namespace octet {
 	  mouse_look_helper.init(this, 200.0f / 360.0f, false);
 	  
 	  
-	  material *blue = new material(vec4(0, 0, 1, 1));
+	 /* material *blue = new material(vec4(0, 0, 1, 1));
 	  mat4t mat;
 	  mat.translate(0, 2, 0);
 	  scene->add_shape(mat, new mesh_sphere(vec3(0, 0, 0), 1), blue, true);
 
 	  mat.translate(0, 2, 0);
-	  scene->add_shape(mat, new mesh_sphere(vec3(0, 0, 0), 1), blue, true);
+	  scene->add_shape(mat, new mesh_sphere(vec3(0, 0, 0), 1), blue, true);*/
 
     }
 
@@ -79,6 +79,19 @@ namespace octet {
 	  {
 		  camNode->translate(vec3(0, -0.15f, 0));
 	  }
+
+	  //if (is_key_down(key_ctrl))
+	  //{
+		 // printf("rotating!\n");
+
+		 // mat4t &objectToWorld = scene->getNode(1)->access_nodeToParent();
+		 // //cameraToWorld.translate(vec3(posX, posY, -posZ));	 
+
+		 // //objectToWorld.rotateY(-rotY);
+		 // //objectToWorld.rotateX(-rotX);
+		 // objectToWorld.rotateX(10);
+		 // objectToWorld.translate(vec3(0.10f, 0, 0));
+	  //}
 
 	  //vec3 position = camNode->get_position();	  
 	  //printf("cam position: %f, %f, %f \n", position.x(), position.y(), position.z());
