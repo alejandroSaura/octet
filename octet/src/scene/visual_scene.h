@@ -273,7 +273,7 @@ namespace octet { namespace scene {
       render_aabbs = false;
       dump_vertices = false;
       render_debug_lines = false;
-      debug_material = new material(vec4(1, 0, 0, 1));
+      debug_material = new material(vec4(0, 0, 1, 1));
       debug_line_buffer.resize(256);
       assert(is_power_of_two(debug_line_buffer.size()));
       memset(&debug_line_buffer[0], 0, debug_line_buffer.size() * sizeof(debug_line_buffer[0]));
@@ -295,6 +295,11 @@ namespace octet { namespace scene {
         delete dispatcher;
       #endif
     }
+
+	void setDebugMaterial(material *m)
+	{
+		debug_material = m;
+	}
 
 	scene_node *getNode(int id)
 	{
@@ -321,6 +326,13 @@ namespace octet { namespace scene {
 		}
 		return result;
 	}
+
+#ifdef OCTET_BULLET
+	void addHingeConstraint(btHingeConstraint *constraint)
+	{
+		world->addConstraint(constraint);
+	}
+#endif
 
 	void add_rigidbody(int id, bool is_dynamic = false, float mass = 1, collison_shape_t *shape = NULL)
 	{
@@ -494,6 +506,16 @@ namespace octet { namespace scene {
         skin_shader->init(true);
       }
     }
+
+	void init_shader()
+	{
+		if (!object_shader) {
+			object_shader = new bump_shader();
+			object_shader->init(false);
+			skin_shader = new bump_shader();
+			skin_shader->init(true);
+		}
+	}
 
     void play_all_anims(resource_dict &dict) {
       dynarray<resource*> anims;

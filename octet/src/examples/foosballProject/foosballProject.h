@@ -24,14 +24,15 @@ namespace octet {
     void app_init() {
       scene =  new visual_scene();
       //app_scene->create_default_camera_and_lights();
+	  
+	  scene->set_render_debug_lines(true);
 
 	  loader->loadScene(scene, "LevelData.xml");
 	  cam = scene->get_camera_instance(0);
 	  camNode = cam->get_node();
 
 	  mouse_look_helper.init(this, 200.0f / 360.0f, false);
-	  
-	  
+	  	  
 	 /* material *blue = new material(vec4(0, 0, 1, 1));
 	  mat4t mat;
 	  mat.translate(0, 2, 0);
