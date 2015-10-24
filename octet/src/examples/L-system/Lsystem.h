@@ -6,12 +6,14 @@
 //
 namespace octet {
   /// Scene containing a box with octet.
-  class L-system : public app {
+  class Lsystem : public app {
     // scene for drawing box
     ref<visual_scene> app_scene;
+	RulesEngine rulesEngine;
+
   public:
     /// this is called when we construct the class before everything is initialised.
-    L-system(int argc, char **argv) : app(argc, argv) {
+    Lsystem(int argc, char **argv) : app(argc, argv) {
     }
 
     /// this is called once OpenGL is initialized
@@ -24,6 +26,17 @@ namespace octet {
       scene_node *node = new scene_node();
       app_scene->add_child(node);
       app_scene->add_mesh_instance(new mesh_instance(node, box, red));
+
+	  rulesEngine.setAxiom("1[0]0");	  
+	  //rulesEngine.addRule("0", "00", 0);
+	  rulesEngine.addRule("1", "11", 1);
+	  rulesEngine.addRule("0", "1[0]0", 1);
+
+	  std::string result1 = rulesEngine.iterate();
+	  std::string result2 = rulesEngine.iterate();
+	  std::string result3 = rulesEngine.iterate();
+	  std::string result4 = rulesEngine.iterate();
+
     }
 
     /// this is called to draw the world
