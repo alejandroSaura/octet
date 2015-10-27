@@ -155,27 +155,6 @@ namespace octet {
 			{
 				state += result[i].c_str();
 			}
-			
-
-			//for (int i = 0; i < rules.size(); i++)
-			//{
-			//	//Select one of the posible right sides of the rules
-			//	float random = 0.9f;
-			//	int j = 0;
-			//	for (j = 0; j < (rules[i].rightSides)->size(); j++)
-			//	{
-			//		if (((rules[i].rightSides)->operator[](j)).probability > random)
-			//		{
-			//			break;
-			//		}
-			//	}
-
-			//	RightSide s = (rules[i].rightSides)->operator[](j);
-
-			//	replaceAll(state, rules[i].leftSide, s.st);
-			//}
-
-
 
 			iterationCounter++;
 			return state;

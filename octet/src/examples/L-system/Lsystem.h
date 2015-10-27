@@ -10,6 +10,11 @@ namespace octet {
     // scene for drawing box
     ref<visual_scene> app_scene;
 	RulesEngine rulesEngine;
+	ref<camera_instance> the_camera;
+
+	mouse_look mouse_look_helper;
+	helper_fps_controller fps_helper;
+	ref<scene_node> player_node;
 
   public:
     /// this is called when we construct the class before everything is initialised.
@@ -20,22 +25,49 @@ namespace octet {
     void app_init() {
       app_scene =  new visual_scene();
       app_scene->create_default_camera_and_lights();
+	  the_camera = app_scene->get_camera_instance(0);
+	  the_camera->set_far_plane(10000);
+
+	  mouse_look_helper.init(this, 200.0f / 360.0f, false);
+	  //fps_helper.init(this);
 
       material *red = new material(vec4(1, 0, 0, 1));
       mesh_box *box = new mesh_box(vec3(4));
       scene_node *node = new scene_node();
       app_scene->add_child(node);
-      app_scene->add_mesh_instance(new mesh_instance(node, box, red));
+      //app_scene->add_mesh_instance(new mesh_instance(node, box, red));
 
-	  rulesEngine.setAxiom("1[0]0");	  
-	  //rulesEngine.addRule("0", "00", 0);
-	  rulesEngine.addRule("1", "11", 1);
-	  rulesEngine.addRule("0", "1[0]0", 1);
+	  rulesEngine.setAxiom("FX");		  
+	  rulesEngine.addRule("F", "C0FF-[C1-F+F]+[C2+F-F]", 1);
+	  rulesEngine.addRule("X", "C0FF+[C1+F]+[C2-F]", 1);
+
+	  mat4t *root = new mat4t();
+	  Tree *tree = new Tree(root, 30, app_scene);
 
 	  std::string result1 = rulesEngine.iterate();
 	  std::string result2 = rulesEngine.iterate();
 	  std::string result3 = rulesEngine.iterate();
 	  std::string result4 = rulesEngine.iterate();
+	  tree->Update(result3);
+
+
+	  float player_height = 1.83f;
+	  float player_radius = 0.25f;
+	  float player_mass = 90.0f;
+
+	  mat4t mat;
+	  mat.loadIdentity();
+	  mat.translate(0, player_height*0.5f, -50);
+
+	  mesh_instance *mi = app_scene->add_shape(
+		  mat,
+		  new mesh_sphere(vec3(0), player_radius),
+		  new material(vec4(0, 0, 1, 1)),
+		  false, player_mass,
+		  new btCapsuleShape(0.25f, player_height)
+		  );
+	  player_node = mi->get_node();
+	  
 
     }
 
@@ -55,6 +87,40 @@ namespace octet {
       scene_node *node = app_scene->get_mesh_instance(0)->get_node();
       node->rotate(1, vec3(1, 0, 0));
       node->rotate(1, vec3(0, 1, 0));
+
+	  scene_node *camera_node = the_camera->get_node();
+	  mat4t &camera_to_world = camera_node->access_nodeToParent();
+	  mouse_look_helper.update(camera_to_world);
+
+	  //fps_helper.update(player_node, camera_node);
+
+	  if (is_key_down(key_left))
+	  {
+		  camera_node->translate(vec3(-0.15f, 0, 0));
+		  //camNode->rotate(5, vec3(0, 0, 1));
+	  }
+	  if (is_key_down(key_right))
+	  {
+		  camera_node->translate(vec3(0.15f, 0, 0));
+	  }
+	  if (is_key_down(key_up))
+	  {
+		  camera_node->translate(vec3(0, 0, -0.15f));
+	  }
+	  if (is_key_down(key_down))
+	  {
+		  camera_node->translate(vec3(0, 0, 0.15f));
+	  }
+	  if (is_key_down(key_backspace))
+	  {
+		  camera_node->translate(vec3(0, 0.15f, 0));
+	  }
+	  if (is_key_down(key_alt))
+	  {
+		  camera_node->translate(vec3(0, -0.15f, 0));
+	  }
+
+
     }
   };
 }

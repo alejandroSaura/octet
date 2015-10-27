@@ -10,6 +10,8 @@
 #define OCTET_BULLET 1
 
 #include "../../octet.h"
+
+#include "Tree.h"
 #include "RulesEngine.h"
 #include "Lsystem.h"
 
