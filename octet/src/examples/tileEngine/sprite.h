@@ -1,4 +1,4 @@
-namespace octet {
+namespace octet {	
 
 	class sprite {
 		// where is our sprite (overkill for a 2D game!)
@@ -8,15 +8,16 @@ namespace octet {
 		float halfWidth;
 
 		// half the height of the sprite
-		float halfHeight;
-
-		// what texture is on our sprite
-		int texture;
+		float halfHeight;	
 
 		//uv coordinates
 		float uvCoord[8];
 
-	public:
+		// what texture is on our sprite
+		int texture;
+
+	public:		
+
 		// true if this sprite is enabled.
 		bool enabled;
 
@@ -39,14 +40,14 @@ namespace octet {
 		}
 
 		//copies the sprite from the library to the active array
-		void instantiate(float x, float y, dynarray<sprite> *activeSprites)
+		sprite instantiate(float x, float y)
 		{
 			//add a new instance to the pool of instantiated sprites
-			sprite *s = new sprite();
-			s->init(texture, halfWidth * 2, halfHeight * 2, uvCoord, true);
-			s->modelToWorld.loadIdentity();
-			s->modelToWorld.translate(x, y, 0);
-			activeSprites->push_back(*s);			
+			sprite s;
+			s.init(texture, halfWidth * 2, halfHeight * 2, uvCoord, true);
+			s.modelToWorld.loadIdentity();
+			s.modelToWorld.translate(x, y, 0);
+			return s;
 		}
 
 

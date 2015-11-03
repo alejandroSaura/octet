@@ -22,6 +22,11 @@ namespace octet {
 		texture_shader texture_shader_;
 
 		int num_sprites = 5000;
+		int mapWidth;
+		int mapHeight;
+		int tileWidth;
+		int tileHeight;
+
 
 		character player;
 
@@ -37,13 +42,11 @@ namespace octet {
 
 	public:
 
-		// library of sprites
-		sprite sprites[5000];
-
-		
+		// library of sprites, we can then instantiate them to use
+		sprite sprites[5000];		
 
 		// instanced sprites
-		dynarray<sprite> activeSprites;
+		sprite **activeSprites;
 
 		/// this is called when we construct the class before everything is initialised.
 		tileEngine(int argc, char **argv) : app(argc, argv) {
@@ -125,10 +128,16 @@ namespace octet {
 			{
 				for (int j = 0; j < (lay->width) - 1; j++)
 				{
-					//first we load the sprite in the sprite library
-					loadSprite(lay->tiles[i][j]);
-					//now we copy the sprite from the library to the active sprites array
-					sprites[lay->tiles[i][j]].instantiate(j*0.2f, -i*0.2f, &activeSprites);
+					if (lay->tiles[i][j] != 0) //we dont want to load or instantiate the void sprite
+					{
+					
+						//first we load the sprite in the sprite library
+						loadSprite(lay->tiles[i][j]);
+
+						//intantiate it and store the instance in activeSprites array
+						sprite s = sprites[lay->tiles[i][j]].instantiate(j*0.2f, -i*0.2f);						
+						activeSprites[j][i] = s;
+					}
 				}
 			}			
 		}
@@ -142,6 +151,31 @@ namespace octet {
 
 			TiXmlNode* pParent = levelTMX.RootElement();
 			TiXmlNode* pChild;
+
+			TiXmlElement* element = pParent->ToElement();
+			TiXmlAttribute* pAttrib = element->FirstAttribute();
+
+			while (pAttrib)
+			{
+				//printf("%s: value=[%s]", pAttrib->Name(), pAttrib->Value());							
+				//printf("\n");
+				string attName(pAttrib->Name());
+				if (attName.operator==("width")){
+					mapWidth = std::stoi(pAttrib->Value());
+				}
+				if (attName.operator==("height")){
+					mapHeight = std::stoi(pAttrib->Value());
+				}
+				if (attName.operator==("tilewidth")){
+					tileWidth = std::stoi(pAttrib->Value());
+				}
+				if (attName.operator==("tileheight")){
+					tileHeight = std::stoi(pAttrib->Value());
+				}
+				pAttrib = pAttrib->Next();
+			}
+
+			
 
 			for (pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
 			{
@@ -165,6 +199,16 @@ namespace octet {
 					}
 				}
 			}
+
+			//Now that we now the dimensions of the map and how many layers we need,
+			//lets create the sprites array:
+			activeSprites = new sprite*[mapHeight];
+			for (int i = 0; i < mapWidth; i++)
+			{
+				activeSprites[i] = new sprite[mapWidth];
+			}
+
+
 		}
 
 		//Load the TMX Dom tree thanks to the TinyXML lib
@@ -233,7 +277,7 @@ namespace octet {
 					string attName(pAttrib->Name());
 
 					if (attName.operator==("gid")){
-						lay->pushTile(std::stoi(pAttrib->Value()));
+						lay->pushTileId(std::stoi(pAttrib->Value()));
 					}
 
 					pAttrib = pAttrib->Next();
@@ -241,9 +285,6 @@ namespace octet {
 			}
 
 			layers.push_back(*lay);
-			//drawLayer(lay);
-
-
 		}
 
 		//fills a tileset class with all the tileset info of the TMX
@@ -348,9 +389,11 @@ namespace octet {
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			// draw all the sprites
-			for (int i = 0; i != activeSprites.size(); ++i) {
-				if (activeSprites[i].is_enabled()){
-					activeSprites[i].render(texture_shader_, cameraToWorld);
+			for (int i = 0; i != mapHeight; ++i) {
+				for (int j = 0; j != mapWidth; ++j) {
+					if (activeSprites[i][j].is_enabled()){
+						activeSprites[i][j].render(texture_shader_, cameraToWorld);
+					}
 				}
 			}			
 

@@ -1,10 +1,8 @@
 namespace octet{
 
-
 	class layer {
-		string name;
 
-		
+		string name;	
 		int heigth;
 
 		int lastRow = 0;	
@@ -13,7 +11,7 @@ namespace octet{
 	public:
 
 		int width;
-		dynarray<int*> tiles;
+		dynarray<int*> tiles; //contains the ids of the textures on each position
 
 		void init(string nam, int h, int w){
 			name = nam;
@@ -21,12 +19,13 @@ namespace octet{
 			width = w;
 
 			//initialize the array
-			for (int i = 0; i < heigth; ++i){
+			for (int i = 0; i < heigth; ++i)
+			{
 				tiles.push_back(new int[width]);
 			}				
 		}
 
-		void pushTile(int id){
+		void pushTileId(int id){
 			
 			if (lastColumn >= width)
 			{
