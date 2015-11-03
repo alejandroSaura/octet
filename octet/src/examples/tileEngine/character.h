@@ -3,19 +3,8 @@ namespace octet{
 
 	class character {
 
-		
-		
-		// where is our sprite (overkill for a 2D game!)
-		mat4t modelToWorld;
-
 		float uvWidth;
 		float uvHeight;
-
-		// half the width of the sprite
-		float halfWidth;
-
-		// half the height of the sprite
-		float halfHeight;
 
 		// what texture is on our sprite
 		int texture;
@@ -24,13 +13,74 @@ namespace octet{
 		float uvCoord[8];
 
 		int step;
+		float row = 0;
 
 	public:
+		// half the width of the sprite
+		float halfWidth;
+
+		// half the height of the sprite
+		float halfHeight;
+
+		mat4t modelToWorld;
+
+		void goLeft()
+		{
+			if (state != LEFT)
+			{
+				state = LEFT;
+				animateCharacter();
+			}
+		}
+		void goRight()
+		{
+			if (state != RIGHT)
+			{
+				state = RIGHT;
+				animateCharacter();
+			}
+		}
+		void goUp()
+		{
+			if (state != UP)
+			{
+				state = UP;
+				animateCharacter();
+			}
+		}
+		void goDown()
+		{
+			if (state != DOWN)
+			{
+				state = DOWN;
+				animateCharacter();
+			}
+		}
+		void goIdle()
+		{
+			if (state != IDLE)
+			{
+				state = IDLE;
+				//animateCharacter();
+			}
+		}
+
+		enum STATES
+		{
+			UP,
+			RIGHT,
+			DOWN,
+			LEFT,
+			IDLE
+		};
+
+		STATES state;
 
 		bool enabled;
-		
-		void loadCharacter(string route, float posX, float posY, float w, float h, float uvs[8], float uvW, float uvH, bool en) 
+
+		void loadCharacter(string route, float posX, float posY, float w, float h, float uvs[8], float uvW, float uvH, bool en)
 		{
+			state = DOWN;
 
 			halfWidth = w * 0.5f;
 			halfHeight = h * 0.5f;
@@ -44,22 +94,41 @@ namespace octet{
 
 			texture = texture = resource_dict::get_texture_handle(GL_RGBA, route.c_str());;
 			enabled = en;
-			
+
 			modelToWorld.loadIdentity();
 			modelToWorld.translate(posX, posY, 0);
 
 			step = 0;
-			
+
+		}
+
+		// move the object
+		void translate(float x, float y) {
+			modelToWorld.translate(x, y, 0);
 		}
 
 		void animateCharacter()
 		{
-			uvCoord[0] = (uvWidth*step);
-			uvCoord[2] = (uvWidth*step + uvWidth);
-			uvCoord[4] = (uvWidth*step + uvWidth);
-			uvCoord[6] = (uvWidth*step);
 
-			step++;
+
+			switch (state)
+			{
+			case UP:  row = 3;  break;
+			case RIGHT: row = 2; break;
+			case DOWN: row = 0;  break;
+			case LEFT: row = 1; break;
+			}
+
+			uvCoord[0] = (uvWidth*step);
+			uvCoord[1] = 1 - (row*uvHeight + uvHeight);
+			uvCoord[2] = (uvWidth*step + uvWidth);
+			uvCoord[3] = 1 - (row*uvHeight + uvHeight);
+			uvCoord[4] = (uvWidth*step + uvWidth);
+			uvCoord[5] = 1 - (row*uvHeight);
+			uvCoord[6] = (uvWidth*step);
+			uvCoord[7] = 1 - row*uvHeight;
+
+			if (state != IDLE) step++;
 			if (step > 2) step = 0;
 		}
 

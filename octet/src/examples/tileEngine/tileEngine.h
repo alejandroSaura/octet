@@ -26,7 +26,8 @@ namespace octet {
 		character player;
 
 		//how many frames between pose and pose
-		int animationRate = 10;
+		int animationRate = 5;
+		const float speed = 0.035f;
 
 		//tilesets		
 		std::vector<tileset> tilesets;
@@ -89,20 +90,31 @@ namespace octet {
 		}
 
 		void movePlayer()
-		{
-			const float speed = 0.05f;
+		{		
 			// left and right arrows
 			if (is_key_down(key_left)) {
+				player.goLeft();
 				cameraToWorld.translate(-speed, 0, 0);
+				player.translate(-speed, 0);
 			}
 			else if (is_key_down(key_right)) {
+				player.goRight();
 				cameraToWorld.translate(speed, 0, 0);
+				player.translate(speed, 0);
 			}
 			else if (is_key_down(key_up)) {
+				player.goUp();
 				cameraToWorld.translate(0, speed, 0);
+				player.translate(0, speed);
 			}
 			else if (is_key_down(key_down)) {
+				player.goDown();
 				cameraToWorld.translate(0, -speed, 0);
+				player.translate(0, -speed);
+			}
+			else
+			{
+				player.goIdle();
 			}
 		}
 
