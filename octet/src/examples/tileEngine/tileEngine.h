@@ -47,6 +47,8 @@ namespace octet {
 
 		// instanced sprites
 		sprite **activeSprites;
+		//bool map for collision detection
+		bool **collisionMap;
 
 		/// this is called when we construct the class before everything is initialised.
 		tileEngine(int argc, char **argv) : app(argc, argv) {
@@ -77,7 +79,7 @@ namespace octet {
 				0, 1
 			};
 
-			player.loadCharacter("assets/tileEngine/Characters/TerraSheet.gif", 0, 0, 0.2f, 0.2f, uvs, 0.082f, 0.125f, true);
+			player.loadCharacter("assets/tileEngine/Characters/TerraSheet.gif", 0.4f, -0.4f, 0.2f, 0.2f, uvs, 0.082f, 0.125f, true);
 
 		}
 
@@ -94,26 +96,76 @@ namespace octet {
 
 		void movePlayer()
 		{		
+			vec4 playerPos = player.modelToWorld.w();
+			
+			float playerX = (playerPos[0]+0.1)  / 0.2f;
+			float playerY = (playerPos[1]-0.1) / 0.2f;
+			if (playerY < 0) playerY *= -1;			
+
 			// left and right arrows
 			if (is_key_down(key_left)) {
 				player.goLeft();
 				cameraToWorld.translate(-speed, 0, 0);
 				player.translate(-speed, 0);
+
+				/*printf("player position: %f, %f, %f\n", playerPos[0], playerPos[1], playerPos[2]);
+				printf("player position tile: %f, %f\n", playerX, playerY);*/
+
+				int i = (int)(playerX - 0.5f);
+				int j = (int)(playerY);
+				
+				if (collisionMap[j][i] == true)
+				{
+					cameraToWorld.translate(speed, 0, 0);
+					player.translate(speed, 0);
+				}
+
 			}
 			else if (is_key_down(key_right)) {
 				player.goRight();
 				cameraToWorld.translate(speed, 0, 0);
 				player.translate(speed, 0);
+
+				printf("player position: %f, %f, %f\n", playerPos[0], playerPos[1], playerPos[2]);
+				printf("player position tile: %f, %f\n", playerX, playerY);
+
+
+				int i = (int)(playerX + 0.5f);
+				int j = (int)(playerY);
+
+				if (collisionMap[j][i] == true)
+				{
+					cameraToWorld.translate(-speed, 0, 0);
+					player.translate(-speed, 0);
+				}
 			}
 			else if (is_key_down(key_up)) {
 				player.goUp();
 				cameraToWorld.translate(0, speed, 0);
 				player.translate(0, speed);
+
+				int i = (int)(playerX);
+				int j = (int)(playerY - 0.5f);
+
+				if (collisionMap[j][i] == true)
+				{
+					cameraToWorld.translate(0, -speed, 0);
+					player.translate(0, -speed);
+				}
 			}
 			else if (is_key_down(key_down)) {
 				player.goDown();
 				cameraToWorld.translate(0, -speed, 0);
 				player.translate(0, -speed);
+
+				int i = (int)(playerX);
+				int j = (int)(playerY + 0.5f);
+
+				if (collisionMap[j][i] == true)
+				{
+					cameraToWorld.translate(0, speed, 0);
+					player.translate(0, speed);
+				}
 			}
 			else
 			{
@@ -175,7 +227,12 @@ namespace octet {
 				pAttrib = pAttrib->Next();
 			}
 
-			
+			//create the collision map knowing the dimensions of the map
+			collisionMap = new bool*[mapHeight];
+			for (int i = 0; i < mapWidth; i++)
+			{
+				collisionMap[i] = new bool[mapWidth];
+			}
 
 			for (pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
 			{
@@ -207,8 +264,6 @@ namespace octet {
 			{
 				activeSprites[i] = new sprite[mapWidth];
 			}
-
-
 		}
 
 		//Load the TMX Dom tree thanks to the TinyXML lib
@@ -261,30 +316,85 @@ namespace octet {
 				pAttrib = pAttrib->Next();
 			}
 
-			lay->init(name, height, width);
-
-			TiXmlNode* pParent = pChild->FirstChild(); //data level (see TMX)
-
-			for (pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
+			if (name == "collision")
 			{
-				element = pChild->ToElement();
-				pAttrib = element->FirstAttribute();
+				TiXmlNode* pParent = pChild->FirstChild();
 
-				while (pAttrib)
+				int counter = 0;
+
+				int lastColumn = 0;
+				int lastRow = 0;
+
+				for (pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
 				{
-					//printf("%s: value=[%s]", pAttrib->Name(), pAttrib->Value());							
-					//printf("\n");
-					string attName(pAttrib->Name());
+					element = pChild->ToElement();
+					pAttrib = element->FirstAttribute();
 
-					if (attName.operator==("gid")){
-						lay->pushTileId(std::stoi(pAttrib->Value()));
+						
+					while (pAttrib)
+					{
+						string attName(pAttrib->Name());
+
+						//string va = pAttrib->Value();
+						//int aux = std::stoi(pAttrib->Value());
+
+						if (attName.operator==("gid"))
+						{			
+							if (lastColumn >= width)
+							{
+								lastRow++;
+								lastColumn = 0;
+							}
+							if (std::stoi(pAttrib->Value()) != 0)
+							{
+								collisionMap[lastRow][lastColumn] = true;
+							}
+							else
+							{
+								collisionMap[lastRow][lastColumn] = false;
+							}
+							lastColumn += 1;
+
+
+							//int i = (int)(counter/mapWidth);
+							//int j = (counter - mapWidth*i);
+							////int index = layers[0].tiles[i][j];
+							//collisionMap[i][j] = true;
+							//counter++;
+						}
+
+						pAttrib = pAttrib->Next();
+							
 					}
-
-					pAttrib = pAttrib->Next();
 				}
 			}
+			else
+			{
 
-			layers.push_back(*lay);
+				lay->init(name, height, width);
+
+				TiXmlNode* pParent = pChild->FirstChild(); //data level (see TMX)
+
+				for (pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
+				{
+					element = pChild->ToElement();
+					pAttrib = element->FirstAttribute();
+
+					while (pAttrib)
+					{
+						//printf("%s: value=[%s]", pAttrib->Name(), pAttrib->Value());							
+						//printf("\n");
+						string attName(pAttrib->Name());
+
+						if (attName.operator==("gid")){
+							lay->pushTileId(std::stoi(pAttrib->Value()));
+						}
+
+						pAttrib = pAttrib->Next();
+					}
+				}
+				layers.push_back(*lay);
+			}
 		}
 
 		//fills a tileset class with all the tileset info of the TMX
