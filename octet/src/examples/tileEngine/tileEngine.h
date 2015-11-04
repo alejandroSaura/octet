@@ -187,7 +187,7 @@ namespace octet {
 						loadSprite(lay->tiles[i][j]);
 
 						//intantiate it and store the instance in activeSprites array
-						sprite s = sprites[lay->tiles[i][j]].instantiate(j*0.2f, -i*0.2f);						
+						sprite s = sprites[lay->tiles[i][j]].instantiate(j*0.2f, -i*0.2f, lay->getDepth());						
 						activeSprites[j][i] = s;
 					}
 				}
@@ -373,7 +373,29 @@ namespace octet {
 
 				lay->init(name, height, width);
 
-				TiXmlNode* pParent = pChild->FirstChild(); //data level (see TMX)
+				//Get layer's custom parameters
+				TiXmlNode* pParentParams = pChild->FirstChild();
+				for (TiXmlNode* auxChild = pParentParams->FirstChild(); auxChild != 0; auxChild = auxChild->NextSibling())
+				{
+					element = auxChild->ToElement();
+					pAttrib = element->FirstAttribute();
+
+					while (pAttrib)
+					{
+						string attName(pAttrib->Name());
+						string attValue(pAttrib->Value());
+						if (attName.operator==("name") && attValue.operator==("Depth"))
+						{
+							int depth = 0;
+							pAttrib = pAttrib->Next();
+							lay->setDepth(std::stoi(pAttrib->Value()));
+							break;
+						}
+						pAttrib = pAttrib->Next();
+					}
+				}
+
+				TiXmlNode* pParent = pChild->FirstChild()->NextSibling(); //data level (see TMX)
 
 				for (pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
 				{

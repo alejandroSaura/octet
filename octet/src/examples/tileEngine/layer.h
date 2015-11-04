@@ -8,6 +8,8 @@ namespace octet{
 		int lastRow = 0;	
 		int lastColumn = 0;
 
+		int depth = 0;
+
 	public:
 
 		int width;
@@ -23,6 +25,15 @@ namespace octet{
 			{
 				tiles.push_back(new int[width]);
 			}				
+		}
+
+		void setDepth(int d)
+		{
+			depth = d;
+		}
+		int getDepth()
+		{
+			return depth;
 		}
 
 		void pushTileId(int id){

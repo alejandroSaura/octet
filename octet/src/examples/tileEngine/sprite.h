@@ -40,13 +40,13 @@ namespace octet {
 		}
 
 		//copies the sprite from the library to the active array
-		sprite instantiate(float x, float y)
+		sprite instantiate(float x, float y, float depth)
 		{
 			//add a new instance to the pool of instantiated sprites
 			sprite s;
 			s.init(texture, halfWidth * 2, halfHeight * 2, uvCoord, true);
 			s.modelToWorld.loadIdentity();
-			s.modelToWorld.translate(x, y, 0);
+			s.modelToWorld.translate(x, y, depth);
 			return s;
 		}
 

@@ -23,13 +23,20 @@ namespace octet { namespace shaders {
       // it outputs gl_Position and uv_ to the rasterizer
       const char vertex_shader[] = SHADER_STR(
         varying vec2 uv_;
+		varying vec4 model_pos;
+		varying vec4 world_pos;
 
         attribute vec4 pos;
         attribute vec2 uv;
 
         uniform mat4 modelToProjection;
 
-        void main() { gl_Position = modelToProjection * pos; uv_ = uv; }
+        void main() 
+		{ 
+			model_pos = pos;
+			gl_Position = modelToProjection * pos; 
+			uv_ = uv; 
+		}
       );
 
       // this is the fragment shader
@@ -37,9 +44,20 @@ namespace octet { namespace shaders {
       // this is called for every fragment
       // it outputs gl_FragColor, the color of the pixel and inputs uv_
       const char fragment_shader[] = SHADER_STR(
+		//in vec4 gl_PointCoord;
         varying vec2 uv_;
-        uniform sampler2D sampler;
-        void main() { gl_FragColor = texture2D(sampler, uv_); }
+		varying vec4 model_pos;
+
+        uniform sampler2D sampler;		
+
+		void main()
+		{ 
+			
+			//gl_FragColor = vec4(uv_.x, 0, uv_.y, 1) * texture2D(sampler, uv_);	
+			//gl_FragColor = vec4(model_pos.x, model_pos.y, 0.5f, 1) * texture2D(sampler, uv_);
+
+			gl_FragColor = texture2D(sampler, uv_);
+		}
       );
     
       // use the common shader code to compile and link the shaders
@@ -49,6 +67,7 @@ namespace octet { namespace shaders {
       // extract the indices of the uniforms to use later
       modelToProjectionIndex_ = glGetUniformLocation(program(), "modelToProjection");
       samplerIndex_ = glGetUniformLocation(program(), "sampler");
+	  
     }
 
     void render(const mat4t &modelToProjection, int sampler) {
