@@ -388,7 +388,8 @@ namespace octet {
 						{
 							int depth = 0;
 							pAttrib = pAttrib->Next();
-							lay->setDepth(std::stoi(pAttrib->Value()));
+							int d = std::stoi(pAttrib->Value());
+							lay->setDepth(d);
 							break;
 						}
 						pAttrib = pAttrib->Next();
