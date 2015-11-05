@@ -8,7 +8,7 @@ namespace octet{
 		int lastRow = 0;	
 		int lastColumn = 0;
 
-		int depth = 0;
+		float depth = 0;
 
 	public:
 
@@ -27,11 +27,11 @@ namespace octet{
 			}				
 		}
 
-		void setDepth(int d)
+		void setDepth(float d)
 		{
 			depth = d;
 		}
-		int getDepth()
+		float getDepth()
 		{
 			return depth;
 		}

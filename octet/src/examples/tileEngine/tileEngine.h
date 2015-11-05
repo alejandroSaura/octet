@@ -46,7 +46,8 @@ namespace octet {
 		sprite sprites[5000];		
 
 		// instanced sprites
-		sprite **activeSprites;
+		//sprite **activeSprites;
+		dynarray<sprite> activeSprites;
 		//bool map for collision detection
 		bool **collisionMap;
 
@@ -188,7 +189,8 @@ namespace octet {
 
 						//intantiate it and store the instance in activeSprites array
 						sprite s = sprites[lay->tiles[i][j]].instantiate(j*0.2f, -i*0.2f, lay->getDepth());						
-						activeSprites[j][i] = s;
+						//activeSprites[j][i] = s;
+						activeSprites.push_back(s);
 					}
 				}
 			}			
@@ -234,12 +236,12 @@ namespace octet {
 				collisionMap[i] = new bool[mapWidth];
 			}
 
+			//look for tilesets and layers definition
 			for (pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
 			{
 				printf("\n");
 				if (pChild->Type() == TiXmlNode::TINYXML_ELEMENT){
-					//printf("element found! %s \n", pChild->Value());
-
+					
 					string tilesetType = "tileset";
 					string layerType = "layer";
 
@@ -259,11 +261,11 @@ namespace octet {
 
 			//Now that we now the dimensions of the map and how many layers we need,
 			//lets create the sprites array:
-			activeSprites = new sprite*[mapHeight];
+			/*activeSprites = new sprite*[mapHeight];
 			for (int i = 0; i < mapWidth; i++)
 			{
 				activeSprites[i] = new sprite[mapWidth];
-			}
+			}*/
 		}
 
 		//Load the TMX Dom tree thanks to the TinyXML lib
@@ -286,10 +288,10 @@ namespace octet {
 
 		}
 
-		//fills a tileset class with all the tileset info of the TMX
+		//fills a layer class with all the layers info of the TMX
 		void loadLayer(TiXmlNode* pChild)
 		{
-			layer* lay = new layer();
+			layer lay;
 			string name;
 			int width = 0;
 			int height = 0;
@@ -303,20 +305,23 @@ namespace octet {
 				//printf("\n");
 				string attName(pAttrib->Name());
 
-				if (attName.operator==("name")){
+				if (attName.operator==("name"))
+				{
 					name = pAttrib->Value();
 				}
-				else if (attName.operator==("width")){
+				else if (attName.operator==("width"))
+				{
 					width = std::stoi(pAttrib->Value());
 				}
-				else if (attName.operator==("height")){
+				else if (attName.operator==("height"))
+				{
 					height = std::stoi(pAttrib->Value());
 				}
 
 				pAttrib = pAttrib->Next();
 			}
 
-			if (name == "collision")
+			if (name == "collision") //this will be a special layer, that fills the collision array
 			{
 				TiXmlNode* pParent = pChild->FirstChild();
 
@@ -329,14 +334,10 @@ namespace octet {
 				{
 					element = pChild->ToElement();
 					pAttrib = element->FirstAttribute();
-
 						
 					while (pAttrib)
 					{
-						string attName(pAttrib->Name());
-
-						//string va = pAttrib->Value();
-						//int aux = std::stoi(pAttrib->Value());
+						string attName(pAttrib->Name());					
 
 						if (attName.operator==("gid"))
 						{			
@@ -353,27 +354,18 @@ namespace octet {
 							{
 								collisionMap[lastRow][lastColumn] = false;
 							}
-							lastColumn += 1;
-
-
-							//int i = (int)(counter/mapWidth);
-							//int j = (counter - mapWidth*i);
-							////int index = layers[0].tiles[i][j];
-							//collisionMap[i][j] = true;
-							//counter++;
+							lastColumn += 1;							
 						}
 
-						pAttrib = pAttrib->Next();
-							
+						pAttrib = pAttrib->Next();							
 					}
 				}
 			}
-			else
+			else //not the collision layer
 			{
+				lay.init(name, height, width);
 
-				lay->init(name, height, width);
-
-				//Get layer's custom parameters
+				//Look for layer's custom parameters
 				TiXmlNode* pParentParams = pChild->FirstChild();
 				for (TiXmlNode* auxChild = pParentParams->FirstChild(); auxChild != 0; auxChild = auxChild->NextSibling())
 				{
@@ -386,10 +378,10 @@ namespace octet {
 						string attValue(pAttrib->Value());
 						if (attName.operator==("name") && attValue.operator==("Depth"))
 						{
-							int depth = 0;
+							float depth = 0;
 							pAttrib = pAttrib->Next();
-							int d = std::stoi(pAttrib->Value());
-							lay->setDepth(d);
+							depth = std::stof(pAttrib->Value());
+							lay.setDepth(depth);
 							break;
 						}
 						pAttrib = pAttrib->Next();
@@ -398,32 +390,32 @@ namespace octet {
 
 				TiXmlNode* pParent = pChild->FirstChild()->NextSibling(); //data level (see TMX)
 
+				//Fill the layer tiles info
 				for (pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
 				{
 					element = pChild->ToElement();
 					pAttrib = element->FirstAttribute();
 
 					while (pAttrib)
-					{
-						//printf("%s: value=[%s]", pAttrib->Name(), pAttrib->Value());							
-						//printf("\n");
+					{						
 						string attName(pAttrib->Name());
 
-						if (attName.operator==("gid")){
-							lay->pushTileId(std::stoi(pAttrib->Value()));
+						if (attName.operator==("gid"))
+						{
+							lay.pushTileId(std::stoi(pAttrib->Value()));
 						}
 
 						pAttrib = pAttrib->Next();
 					}
 				}
-				layers.push_back(*lay);
+				layers.push_back(lay);
 			}
 		}
 
 		//fills a tileset class with all the tileset info of the TMX
 		void loadTileset(TiXmlNode* pChild)
 		{
-			tileset* set = new tileset();
+			tileset set;
 
 			int firstgid;
 			string name;
@@ -436,28 +428,29 @@ namespace octet {
 
 			TiXmlElement* element = pChild->ToElement();
 			TiXmlAttribute* pAttrib = element->FirstAttribute();
-			//printf("first attribute: %s \n", pAttrib->Value());
 
 			while (pAttrib)
 			{
-				//printf("%s: value=[%s]", pAttrib->Name(), pAttrib->Value());							
-				//printf("\n");
 				string attName(pAttrib->Name());
 
-
-				if (attName.operator==("firstgid")){
+				if (attName.operator==("firstgid"))
+				{
 					firstgid = std::stoi(pAttrib->Value());
 				}
-				if (attName.operator==("name")){
+				if (attName.operator==("name"))
+				{
 					name = pAttrib->Value();
 				}
-				else if (attName.operator==("tilewidth")){
+				else if (attName.operator==("tilewidth"))
+				{
 					tileWidth = std::stoi(pAttrib->Value());
 				}
-				else if (attName.operator==("tileheight")){
+				else if (attName.operator==("tileheight"))
+				{
 					tileHeight = std::stoi(pAttrib->Value());
 				}
-				else if (attName.operator==("tilecount")){
+				else if (attName.operator==("tilecount"))
+				{
 					tileCount = std::stoi(pAttrib->Value());
 				}
 
@@ -466,30 +459,30 @@ namespace octet {
 
 			TiXmlElement* imageElement = pChild->FirstChildElement();
 			pAttrib = imageElement->FirstAttribute();
-			//printf("first attribute: %s \n", pAttrib->Value());
 
 			while (pAttrib)
 			{
-				//printf("%s: value=[%s]", pAttrib->Name(), pAttrib->Value());							
-				//printf("\n");
 				string attName(pAttrib->Name());
 
-				if (attName.operator==("source")){
+				if (attName.operator==("source"))
+				{
 					imageSource = pAttrib->Value();
 				}
-				else if (attName.operator==("width")){
+				else if (attName.operator==("width"))
+				{
 					width = std::stoi(pAttrib->Value());
 				}
-				else if (attName.operator==("height")){
+				else if (attName.operator==("height"))
+				{
 					height = std::stoi(pAttrib->Value());
 				}
 
 				pAttrib = pAttrib->Next();
 			}
 
-			set->init(firstgid, name, imageSource, width, height, tileWidth, tileHeight, tileCount, sprites);
+			set.init(firstgid, name, imageSource, width, height, tileWidth, tileHeight, tileCount, sprites);
 
-			tilesets.push_back(*set);
+			tilesets.push_back(set);
 		}
 
 		//load the sprite in library, accessing its tileset.
@@ -515,22 +508,29 @@ namespace octet {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			// don't allow Z buffer depth testing (closer objects are always drawn in front of far ones)
-			glDisable(GL_DEPTH_TEST);
+			glEnable(GL_DEPTH_TEST);
 
 			// allow alpha blend (transparency when alpha channel is 0)
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			// draw all the sprites
-			for (int i = 0; i != mapHeight; ++i) {
+			/*for (int i = 0; i != mapHeight; ++i) {
 				for (int j = 0; j != mapWidth; ++j) {
 					if (activeSprites[i][j].is_enabled()){
 						activeSprites[i][j].render(texture_shader_, cameraToWorld);
 					}
 				}
-			}			
+			}	*/		
 
+			
+			for (int i = 0; i != activeSprites.size(); ++i) 
+			{				
+				activeSprites[i].render(texture_shader_, cameraToWorld);				
+			}
 			player.render(texture_shader_, cameraToWorld);
+
+			
 
 			char score_text[32];
 			//sprintf(score_text, "score: %d   lives: %d\n", score, num_lives);
