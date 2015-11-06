@@ -51,13 +51,14 @@ namespace octet {
 		}
 
 
-		void render(texture_shader &shader, mat4t &cameraToWorld) {
+		void render(texture_shader &shader, mat4t &cameraToWorld, vec3 playerPos) {
 			// invisible sprite... used for gameplay.
 			if (!texture) return;
 
 			// build a projection matrix: model -> world -> camera -> projection
 			// the projection space is the cube -1 <= x/w, y/w, z/w <= 1
 			mat4t modelToProjection = mat4t::build_projection_matrix(modelToWorld, cameraToWorld);
+			
 
 			// set up opengl to draw textured triangles using sampler 0 (GL_TEXTURE0)
 			glActiveTexture(GL_TEXTURE0);
@@ -66,7 +67,7 @@ namespace octet {
 			// use "old skool" rendering
 			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			shader.render(modelToProjection, 0);
+			shader.render(modelToProjection, modelToWorld, playerPos, 0);
 
 			// this is an array of the positions of the corners of the sprite in 3D
 			// a straight "float" here means this array is being generated here at runtime.

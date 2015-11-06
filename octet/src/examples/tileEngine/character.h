@@ -147,7 +147,10 @@ namespace octet{
 			// use "old skool" rendering
 			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			shader.render(modelToProjection, 0);
+			vec4 p = modelToWorld.w();
+			vec3 playerPos = vec3(p[0], p[1], p[3]);
+			
+			shader.render(modelToProjection, modelToWorld, playerPos, 0);
 
 			// this is an array of the positions of the corners of the sprite in 3D
 			// a straight "float" here means this array is being generated here at runtime.

@@ -537,10 +537,11 @@ namespace octet {
 				}
 			}	*/		
 
-			
+			vec4 p = player.modelToWorld.w();
+			vec3 playerPos = vec3(p[0], p[1], p[3]);
 			for (int i = 0; i != activeSprites.size(); ++i) 
 			{				
-				activeSprites[i].render(texture_shader_, cameraToWorld);				
+				activeSprites[i].render(texture_shader_, cameraToWorld, playerPos);				
 			}
 			player.render(texture_shader_, cameraToWorld);
 
