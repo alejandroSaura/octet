@@ -96,7 +96,7 @@ namespace octet{
 			enabled = en;
 
 			modelToWorld.loadIdentity();
-			modelToWorld.translate(posX, posY, 0.05f);
+			modelToWorld.translate(posX, posY, 0.0015f);
 
 			step = 0;
 

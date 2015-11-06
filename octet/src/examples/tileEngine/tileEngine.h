@@ -65,7 +65,7 @@ namespace octet {
 			cameraToWorld.loadIdentity();
 			cameraToWorld.translate(0, 0, 3);
 
-			loadLevel("../../../assets/tileEngine/TestLevel/Test.tmx");
+			loadLevel("../../../assets/tileEngine/TestLevel/Dungeon.tmx");
 
 			//draw all layers
 			for (std::vector<layer>::size_type i = 0; i != layers.size(); i++) {
@@ -467,6 +467,9 @@ namespace octet {
 				if (attName.operator==("source"))
 				{
 					imageSource = pAttrib->Value();
+					std::string im = std::string(imageSource.c_str());
+					replace(im, ".png", ".gif");
+					imageSource = string(im.c_str());
 				}
 				else if (attName.operator==("width"))
 				{
@@ -483,6 +486,14 @@ namespace octet {
 			set.init(firstgid, name, imageSource, width, height, tileWidth, tileHeight, tileCount, sprites);
 
 			tilesets.push_back(set);
+		}
+
+		bool replace(std::string& str, const std::string& from, const std::string& to) {
+			size_t start_pos = str.find(from);
+			if (start_pos == std::string::npos)
+				return false;
+			str.replace(start_pos, from.length(), to);
+			return true;
 		}
 
 		//load the sprite in library, accessing its tileset.
@@ -502,6 +513,9 @@ namespace octet {
 			simulate();
 			// set a viewport - includes whole window area
 			glViewport(x, y, w, h);
+
+			//glOrtho(-0.5f, 0.5f, -0.5f, 0.5f, 0.01f, 20.0f);
+
 
 			// clear the background to black
 			glClearColor(0, 0, 0, 1);
