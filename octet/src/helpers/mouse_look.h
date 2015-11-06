@@ -57,7 +57,7 @@ namespace octet { namespace helpers {
       float angle_x = (float)(mouse_center_x - rx) * sensitivity;
       float angle_y = (float)(mouse_center_y - ry) * sensitivity;
       angle_y = std::max(-90.0f, std::min(angle_y, 90.0f));
-      cameraToWorld.rotateY(angle_x);
+      cameraToWorld.rotateY(angle_x-90);
       cameraToWorld.rotateX(invert_mouse ? -angle_y : angle_y);
     }
   };

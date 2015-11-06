@@ -26,6 +26,7 @@ namespace octet
 			TiXmlElement* camerasRoot = sceneXML.FirstChildElement("ArrayOfOctetCamera");
 			TiXmlElement* rigidBodiesRoot = sceneXML.FirstChildElement("ArrayOfOctetRigidBody");
 			TiXmlElement* hingeJointsRoot = sceneXML.FirstChildElement("ArrayOfOctetHingeJoint");
+			TiXmlElement* springJointsRoot = sceneXML.FirstChildElement("ArrayOfOctetSpringJoint");
 
 			TiXmlElement* child;
 			
@@ -370,6 +371,74 @@ namespace octet
 					
 				}
 			}	
+
+			if (springJointsRoot != nullptr)
+			{
+				child = springJointsRoot->FirstChildElement();
+				for (child; child; child = child->NextSiblingElement())
+				{
+					printf("SpringJoint object found\n");
+
+					int idFrom;
+					int idTo;
+
+					float springFactor;
+					
+					btVector3 anchor;
+					btVector3 anchorB;
+
+					TiXmlElement* element;
+
+					element = child->FirstChildElement("nodeIdFrom");
+					idFrom = atof(element->GetText());
+
+					element = child->FirstChildElement("nodeIdTO");
+					idTo = atof(element->GetText());
+
+
+					element = child->FirstChildElement("springFactor");
+					springFactor = atof(element->GetText());					
+
+					element = child->FirstChildElement("anchorX");
+					anchor.setX(atof(element->GetText()));
+					element = child->FirstChildElement("anchorY");
+					anchor.setY(atof(element->GetText()));
+					element = child->FirstChildElement("anchorZ");
+					anchor.setZ(-atof(element->GetText()));
+
+					element = child->FirstChildElement("anchorBX");
+					anchorB.setX(atof(element->GetText()));
+					element = child->FirstChildElement("anchorBY");
+					anchorB.setY(atof(element->GetText()));
+					element = child->FirstChildElement("anchorBZ");
+					anchorB.setZ(-atof(element->GetText()));
+
+
+
+					scene_node *nodeFrom = scene->getNode(idFrom);
+					scene_node *nodeTo = scene->getNode(idTo);
+
+					btRigidBody *rbFrom = nodeFrom->get_rigid_body();
+					btRigidBody *rbTo = nodeTo->get_rigid_body();								
+					
+					btTransform frameInA = btTransform::getIdentity();
+					frameInA.setOrigin(anchor);
+					btTransform frameInB = btTransform::getIdentity();
+					frameInB.setOrigin(anchorB);
+
+					btGeneric6DofSpringConstraint *springConstraint = new btGeneric6DofSpringConstraint(*rbFrom, *rbTo, frameInA, frameInB, true);					
+
+					springConstraint->setStiffness(0, springFactor);
+					springConstraint->setStiffness(1, springFactor);
+					springConstraint->setStiffness(2, springFactor);
+					springConstraint->setStiffness(3, springFactor);
+					springConstraint->setStiffness(4, springFactor);
+					springConstraint->setStiffness(5, springFactor);
+
+					scene->addSpringConstraint(springConstraint);
+
+				}
+			}
 
 
 		}

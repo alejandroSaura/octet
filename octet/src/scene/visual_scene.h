@@ -334,6 +334,13 @@ namespace octet { namespace scene {
 	}
 #endif
 
+#ifdef OCTET_BULLET
+	void addSpringConstraint(btGeneric6DofSpringConstraint *constraint)
+	{
+		world->addConstraint(constraint);
+	}
+#endif
+
 	void add_rigidbody(int id, bool is_dynamic = false, float mass = 1, collison_shape_t *shape = NULL)
 	{
 	#ifdef OCTET_BULLET
