@@ -6,7 +6,7 @@
 //
 namespace octet {
   /// Scene containing a box with octet.
-  class foosballProject : public app {
+  class TestApp : public app {
     // scene for drawing box
 	  ref<visual_scene> scene;
 	sceneLoader* loader = new sceneLoader();
@@ -17,7 +17,7 @@ namespace octet {
 
   public:
     /// this is called when we construct the class before everything is initialised.
-    foosballProject(int argc, char **argv) : app(argc, argv) {
+	  TestApp(int argc, char **argv) : app(argc, argv) {
     }
 
     /// this is called once OpenGL is initialized
