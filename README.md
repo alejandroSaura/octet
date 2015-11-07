@@ -1,25 +1,21 @@
-# octet
+# Octet XML scene importer
 
-Octet is a framework for teaching OpenGL and the rudiments of game programming such
-as Geometry construction, Shaders, Matrices, Rigid body Physics and Fluid dynamics.
+This project aims to load complete scenes into the Octet framework designed with external tools like Unity3D (http://unity3d.com/).
+This loader offers solutions to some compatibility problems between softwares:
 
-It has a number of examples in the src/examples directory.
+- solves the position and rotation differences due to alternative coordinate systems (right hand/left hand).
+- adapts this location process using local space rotations instead of octet world space predefined.
+- mimics physics behavior written and tested in arbitrary physics engine, making them work with the bullet engine (integrated in octet).
 
-To use with visual studio, fork this repository into your own account and then
-"Clone Into Desktop" using the GitHub tool and open one of the .sln files in src/examples.
+This way, developers can visually locate objects designing a basic scene and add physical behavior between objects without dealing with c++ details.
 
-There is a python script for generating your own projects from a template.
+In the project actual state only some shapes and features are supported:
 
-From the octet directory run:
+- Cubes, paralepipeds
+- Spheres
+- Rigidbodies (Kinematic and non-kinematic distinction)
+- Hinge Joints
+- Spring Joints (transformed into bullet's "6 DOF spring constraint [http://bulletphysics.org/Bullet/BulletFull/classbtGeneric6DofSpringConstraint.html])
 
-packaging\make_example.py my_example
-
-To create your own project in src/examples
-
-Examples should also work with Xcode, although testing is a lot less thorough. If it does not work, send
-me a pull request with fixes, please...
-
-Octet is a bit unusual in that it does not use external libraries such as libjpeg or zlib.
-These are implemented in source form in the framework so that you can understand the code.
-The source of most academic libraries is almost unreadble, so we aim to help your understanding
-of coding codecs such as GIF, JPEG, ZIP and so on.
+Bug report:
+Please be careful with importing geometry without rigidbody, it will not be rotated correctly. As a possible workaround, attach a rigidbody and mark it as kinematic.
