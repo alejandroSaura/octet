@@ -38,3 +38,6 @@ I load this TMX file in Octet with the TinyXML library. Then, I use its implemen
 ![Alt text](https://github.com/alejandroSaura/octet/blob/tilesEngine/octetGame.PNG)
 	
 I include in the project a basic shader that receives as input the position of the player and displays only the fragments inside certain distance, giving the feeling of dungeon area.
+
+Demo video:
+https://www.youtube.com/watch?v=nFO0dNjp-go
