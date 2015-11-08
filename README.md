@@ -41,3 +41,7 @@ I include in the project a basic shader that receives as input the position of t
 
 Demo video:
 https://www.youtube.com/watch?v=nFO0dNjp-go
+
+## Acknowledgements
+
+Thanks to Raúl Araújo Álvarez (https://github.com/Rarau/) for the reference to the "Tiled" map editor tool, for guides on implementing character animation and for his help while understanding shaders.
