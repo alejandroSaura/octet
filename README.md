@@ -17,7 +17,7 @@ In the project's actual state only some shapes and features are supported:
 - Spheres
 - Rigidbodies (Kinematic and non-kinematic distinction)
 - Hinge Joints
-- Spring Joints (transformed into bullet's "6 DOF spring constraint [http://bulletphysics.org/Bullet/BulletFull/classbtGeneric6DofSpringConstraint.html])
+- Spring Joints (transformed into bullet's "6 DOF spring constraint" [http://bulletphysics.org/Bullet/BulletFull/classbtGeneric6DofSpringConstraint.html])
 
 Video demo: https://www.youtube.com/watch?v=ks-I-f_m1AM
 
@@ -25,4 +25,9 @@ Follow my developments on my blog: https://alejandrosaura.wordpress.com/
 
 ## Bug report:
 Please be careful with importing geometry without rigidbody, it will not be rotated correctly. As a possible workaround, attach a rigidbody and mark it as kinematic.
+
+## Acknowledgements:
+
+Thanks to Raúl Araújo Álvarez (https://github.com/Rarau/), who thought initially the idea of developing a unity importer for octet and for the help with Spring Joint constraints. Invaluable.
+
 
