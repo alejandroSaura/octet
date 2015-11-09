@@ -37,19 +37,22 @@ namespace octet {
       app_scene->add_child(node);
       //app_scene->add_mesh_instance(new mesh_instance(node, box, red));
 
-	  rulesEngine.setAxiom("X");		  
-	  rulesEngine.addRule("F", "FF", 1);
-	  rulesEngine.addRule("X", "C0F-[C2[X]+C3X]+C1F[C3+FX]-X", 1);
+	  rulesEngine.setAxiom("FX");		  
+	  rulesEngine.addRule("F", "C0FF-[C1-F+F]+[C2+F-F]", 1);
+	  rulesEngine.addRule("X", "C0FF+[C1+F]+[C2-F]", 1);
 
 	  mat4t *root = new mat4t();
-	  Tree *tree = new Tree(root, 25, app_scene);
+	  Tree *tree = new Tree(root, app_scene);
+	  tree->setAngle(-20);
+	  tree->setSegmentLength(0.5f);
+	  tree->setSegmentThickness(0.1f);
 
 	  std::string result1 = rulesEngine.iterate();
 	  std::string result2 = rulesEngine.iterate();
 	  std::string result3 = rulesEngine.iterate();
 	  std::string result4 = rulesEngine.iterate();
 	  std::string result5 = rulesEngine.iterate();
-	  tree->Update(result4);
+	  tree->Update(result3);
 
 
 	  float player_height = 1.83f;

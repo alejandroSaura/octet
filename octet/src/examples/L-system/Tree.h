@@ -5,6 +5,9 @@ namespace octet {
 
 	class Tree
 	{
+		float segmentLength = 1;
+		float segmentThickness = 0.05f;
+
 		ref<visual_scene> scene;
 
 		TreeNode *rootNode;
@@ -17,11 +20,11 @@ namespace octet {
 
 		vec4 currentColor;
 
-		float angle;
+		float angle = 20;
 		float currentRot;
 
 	public:
-		Tree(mat4t *_root, float _angle, ref<visual_scene> _scene)
+		Tree(mat4t *_root, ref<visual_scene> _scene)
 		{
 			rootNode = new TreeNode();
 			rootNode->parent = nullptr;
@@ -30,13 +33,28 @@ namespace octet {
 			memoryAngle = *new dynarray<float>(500);
 			memoryNode = *new dynarray<TreeNode>(500);
 
-			segments = *new dynarray<TreeSegment>(2000);
-			nodes = *new dynarray<TreeNode>(2000);
+			segments = *new dynarray<TreeSegment>(5000);
+			nodes = *new dynarray<TreeNode>(5000);
 
 			scene = _scene;
 
 			currentColor = vec4(1, 0, 0, 1);
-			angle = _angle;
+			
+		}
+
+		void setSegmentLength(float l)
+		{
+			segmentLength = l;
+		}
+
+		void setSegmentThickness(float t)
+		{
+			segmentThickness = t;
+		}
+
+		void setAngle(float a)
+		{
+			angle = a;
 		}
 
 		void Update(std::string description)
@@ -52,8 +70,8 @@ namespace octet {
 				{					
 					//create a segment from current node 
 					TreeSegment newSegment;			
-					newSegment.thickness = 0.05f;
-					newSegment.lenght = 2;
+					newSegment.thickness = segmentThickness;
+					newSegment.lenght = segmentLength;
 					newSegment.startNode = currentNode;
 					newSegment.color = currentColor;
 					newSegment.rotZ = currentRot;	
