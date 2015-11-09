@@ -10,6 +10,8 @@ namespace octet {
 		TreeNode *rootNode;
 		TreeNode *currentNode;
 		dynarray<TreeNode> memoryNode;
+		dynarray<float> memoryAngle;
+
 		dynarray<TreeSegment> segments;
 		dynarray<TreeNode> nodes;
 
@@ -24,6 +26,9 @@ namespace octet {
 			rootNode = new TreeNode();
 			rootNode->parent = nullptr;
 			rootNode->transform = *_root;
+
+			memoryAngle = *new dynarray<float>(500);
+			memoryNode = *new dynarray<TreeNode>(500);
 
 			segments = *new dynarray<TreeSegment>(2000);
 			nodes = *new dynarray<TreeNode>(2000);
@@ -44,17 +49,15 @@ namespace octet {
 			{
 				char command = dividedDescription[k];
 				if (command == 'F') //create segment
-				{
-					//Check through currentNode children if we already have this segment
-					for (int i = 0; i < currentNode->children.size(); i++)
-					{
-						//currentNode->children[i];
-					}
+				{					
 					//create a segment from current node 
-					TreeSegment newSegment;					
+					TreeSegment newSegment;			
+					newSegment.thickness = 0.05f;
+					newSegment.lenght = 2;
 					newSegment.startNode = currentNode;
 					newSegment.color = currentColor;
 					newSegment.rotZ = currentRot;	
+
 					//draw segment
 					TreeNode n = newSegment.Init(scene);
 
@@ -72,13 +75,20 @@ namespace octet {
 				else if (command == '[') //save node in memory
 				{
 					TreeNode n = *currentNode;
+					float a = currentRot;
 					memoryNode.push_back(n);
+					memoryAngle.push_back(a);
 				}
 				else if (command == ']') //load node from memory
 				{
 						int aux = memoryNode.size();
 						currentNode = &memoryNode[aux-1];
 						memoryNode.pop_back();
+
+						aux = memoryAngle.size();
+						currentRot = memoryAngle[aux - 1];
+						memoryAngle.pop_back();
+
 				}				
 				else if (command == 'C') //change color (looking for next character)
 				{

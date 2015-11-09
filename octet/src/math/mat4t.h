@@ -80,6 +80,11 @@ namespace octet { namespace math {
       v[0] = x; v[1] = y; v[2] = z; v[3] = w;
     }
 
+	vec3 getPosition()
+	{
+		return vec3(row(3)[0], row(3)[1], row(3)[2]);
+	}
+
     /// initialise the matrix from a collada matrix, for example.
     void init_transpose(const float *f)
     {
