@@ -33,7 +33,7 @@ namespace octet {
 		int k; //index for the loop
 
 	public:
-		Tree(mat4t _root, ref<visual_scene> _scene, std::vector<Tree> *t, std::string description)
+		void init(mat4t _root, ref<visual_scene> _scene, std::vector<Tree> *t, std::string description)
 		{
 			treesArray = t;
 
@@ -122,7 +122,7 @@ namespace octet {
 					k++;
 					return; //break the execution until next step!
 				}
-				else if (command == '[') //save node in memory
+				else if (command == '[') //crete a new tree from the current node
 				{
 					TreeNode n = *currentNode;					
 					memoryNode->push_back(n);
@@ -132,6 +132,19 @@ namespace octet {
 
 					float y = currentRotY;
 					memoryAngleY->push_back(y);
+
+					/*std::string child = dividedDescription;
+
+					Tree tree;
+					tree.init(currentNode->transform, scene, treesArray, child);
+					tree.setAngle(-25);
+					tree.setAngleY(45);
+					tree.setSegmentLength(0.5f);
+					tree.setSegmentThickness(0.05f);
+
+					treesArray->push_back(tree);*/
+
+
 				}
 				else if (command == ']') //load node from memory
 				{

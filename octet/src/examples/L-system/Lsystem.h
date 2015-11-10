@@ -17,7 +17,7 @@ namespace octet {
 	ref<scene_node> player_node;
 
 	std::vector<Tree> *trees;
-	Tree *tree;
+	Tree tree;
 
 	int counter = 0;
 	int framesPerStep = 2;
@@ -60,12 +60,13 @@ namespace octet {
 
 	  mat4t root;
 	  root.loadIdentity();
-	  tree = new Tree(root, app_scene, trees, result3);
-	  tree->setAngle(-25);
-	  tree->setAngleY(45);
-	  tree->setSegmentLength(0.5f);	 
-	  tree->setSegmentThickness(0.05f);	 	  
-	  trees->push_back(*tree);
+	  tree.init(root, app_scene, trees, result3);
+	  tree.setAngle(-25);
+	  tree.setAngleY(45);
+	  tree.setSegmentLength(0.5f);
+	  tree.setSegmentThickness(0.05f);
+
+	  trees->push_back(tree);
 
 	  //std::thread second(tree->Grow, result3);
 	  //tree->Grow();
@@ -129,7 +130,7 @@ namespace octet {
 	  //fps_helper.update(player_node, camera_node);
 	  if (is_key_going_down(key_ctrl))
 	  {
-		  tree->Grow();
+		  tree.Grow();
 		  printf("growing");
 	  }
 
