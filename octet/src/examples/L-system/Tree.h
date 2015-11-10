@@ -19,6 +19,8 @@ namespace octet {
 		std::vector<TreeSegment> *segments;
 		std::vector<TreeNode> *nodes;
 
+		std::vector<Tree> *treesArray;
+
 		vec4 currentColor;
 
 		float angle = 20;
@@ -31,8 +33,10 @@ namespace octet {
 		int k; //index for the loop
 
 	public:
-		Tree(mat4t _root, ref<visual_scene> _scene, std::string description)
+		Tree(mat4t _root, ref<visual_scene> _scene, std::vector<Tree> *t, std::string description)
 		{
+			treesArray = t;
+
 			rootNode = *(new TreeNode());
 			rootNode.parent = nullptr;
 			rootNode.transform = _root;

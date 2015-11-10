@@ -16,6 +16,7 @@ namespace octet {
 	helper_fps_controller fps_helper;
 	ref<scene_node> player_node;
 
+	std::vector<Tree> *trees;
 	Tree *tree;
 
 	int counter = 0;
@@ -55,16 +56,19 @@ namespace octet {
 	  std::string result4 = rulesEngine.iterate();
 	  std::string result5 = rulesEngine.iterate();
 
+	  trees = new std::vector<Tree>();
+
 	  mat4t root;
 	  root.loadIdentity();
-	  tree = new Tree(root, app_scene, result3);
+	  tree = new Tree(root, app_scene, trees, result3);
 	  tree->setAngle(-25);
 	  tree->setAngleY(45);
 	  tree->setSegmentLength(0.5f);	 
-	  tree->setSegmentThickness(0.05f);	  
+	  tree->setSegmentThickness(0.05f);	 	  
+	  trees->push_back(*tree);
 
 	  //std::thread second(tree->Grow, result3);
-	  tree->Grow();
+	  //tree->Grow();
 
 
 	  float player_height = 1.83f;
@@ -93,7 +97,11 @@ namespace octet {
 		counter++;
 		if (counter > framesPerStep)
 		{
-			tree->Grow();
+			for (int i = 0; i < trees->size(); i++)
+			{
+				(*trees)[i].Grow();
+			}
+			//tree->Grow();
 			counter = 0;
 		}
 
