@@ -16,7 +16,14 @@ namespace octet {
 	helper_fps_controller fps_helper;
 	ref<scene_node> player_node;
 
+	Tree *tree;
+
+	int counter = 0;
+	int framesPerStep = 2;
+
   public:
+	
+
     /// this is called when we construct the class before everything is initialised.
     Lsystem(int argc, char **argv) : app(argc, argv) {
     }
@@ -42,19 +49,22 @@ namespace octet {
 	  rulesEngine.addRule("X", "C0F*F++[C1+F/]+[C2-F]", 1);
 	  //rulesEngine.addRule("FF", "F*", 0.5f);
 
-	  mat4t *root = new mat4t();
-	  Tree *tree = new Tree(root, app_scene);
-	  tree->setAngle(-25);
-	  tree->setAngleY(45);
-	  tree->setSegmentLength(0.5f);	 
-	  tree->setSegmentThickness(0.05f);
-
 	  std::string result1 = rulesEngine.iterate();
 	  std::string result2 = rulesEngine.iterate();
 	  std::string result3 = rulesEngine.iterate();
 	  std::string result4 = rulesEngine.iterate();
 	  std::string result5 = rulesEngine.iterate();
-	  tree->Update(result3);
+
+	  mat4t root;
+	  root.loadIdentity();
+	  tree = new Tree(root, app_scene, result3);
+	  tree->setAngle(-25);
+	  tree->setAngleY(45);
+	  tree->setSegmentLength(0.5f);	 
+	  tree->setSegmentThickness(0.05f);	  
+
+	  //std::thread second(tree->Grow, result3);
+	  tree->Grow();
 
 
 	  float player_height = 1.83f;
@@ -72,13 +82,21 @@ namespace octet {
 		  false, player_mass,
 		  new btCapsuleShape(0.25f, player_height)
 		  );
-	  player_node = mi->get_node();
-	  
+	  player_node = mi->get_node();  
 
     }
 
+	
     /// this is called to draw the world
-    void draw_world(int x, int y, int w, int h) {
+    void draw_world(int x, int y, int w, int h) {	
+
+		counter++;
+		if (counter > framesPerStep)
+		{
+			tree->Grow();
+			counter = 0;
+		}
+
 
 	  app_scene->set_render_debug_lines(true);
       int vx = 0, vy = 0;
@@ -101,6 +119,12 @@ namespace octet {
 	  mouse_look_helper.update(camera_to_world);
 
 	  //fps_helper.update(player_node, camera_node);
+	  if (is_key_going_down(key_ctrl))
+	  {
+		  tree->Grow();
+		  printf("growing");
+	  }
+
 
 	  if (is_key_down(key_left))
 	  {
