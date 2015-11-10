@@ -16,6 +16,7 @@ namespace octet {
 		std::vector<float> *memoryAngle;
 		std::vector<float> *memoryAngleY;
 
+		std::vector<mesh_cylinder> *meshes;
 		std::vector<TreeSegment> *segments;
 		std::vector<TreeNode> *nodes;
 
@@ -31,10 +32,19 @@ namespace octet {
 		std::string dividedDescription;
 
 		int k; //index for the loop
+		int* idGenerator;
+		int id;
 
 	public:
-		void init(mat4t _root, ref<visual_scene> _scene, std::vector<Tree> *t, std::string description)
+		bool enabled = false;		
+
+		void init(mat4t _root, ref<visual_scene> _scene, std::vector<Tree> *t, std::vector<mesh_cylinder> *m, std::string description, int *idGen)
 		{
+			id = *idGen;
+			//*idGen++;
+			idGenerator = idGen;
+			enabled = true;
+
 			treesArray = t;
 
 			rootNode = *(new TreeNode());
@@ -46,7 +56,9 @@ namespace octet {
 			memoryNode = new std::vector<TreeNode>();
 
 			segments = new std::vector<TreeSegment>();
-			nodes = new std::vector<TreeNode>();
+			nodes = new std::vector<TreeNode>();		
+
+			meshes = m;
 
 			scene = _scene;
 
@@ -81,6 +93,15 @@ namespace octet {
 			angleY = y;
 		}
 
+		void setCurrentRotZ(float z)
+		{
+			currentRot = z;
+		}
+		void setCurrentRotY(float y)
+		{
+			currentRotY = y;
+		}
+
 		void Grow()
 		{		
 			const char* s = dividedDescription.c_str();
@@ -105,9 +126,10 @@ namespace octet {
 					newSegment.color = currentColor;
 					newSegment.rotZ = currentRot;
 					newSegment.rotY = currentRotY;
+					
 
 					//draw segment
-					TreeNode n = newSegment.Init(scene);
+					TreeNode n = newSegment.Init(scene, meshes);
 
 					//push created node and assign to segment					
 					nodes->push_back(n);
@@ -122,33 +144,69 @@ namespace octet {
 					k++;
 					return; //break the execution until next step!
 				}
-				else if (command == '[') //crete a new tree from the current node
+				else if (command == '[') //create a new tree from the current node
 				{
-					TreeNode n = *currentNode;					
+					/*TreeNode n = *currentNode;					
 					memoryNode->push_back(n);
 
 					float a = currentRot;
 					memoryAngle->push_back(a);
 
 					float y = currentRotY;
-					memoryAngleY->push_back(y);
+					memoryAngleY->push_back(y);*/
 
-					/*std::string child = dividedDescription;
+					std::string str = dividedDescription;
+					
+					int beginPos = k+1;
+					int endPos;
 
-					Tree tree;
-					tree.init(currentNode->transform, scene, treesArray, child);
-					tree.setAngle(-25);
-					tree.setAngleY(45);
-					tree.setSegmentLength(0.5f);
-					tree.setSegmentThickness(0.05f);
+					//find which closing bracket we need, counting the open brackets
+					//int openBracketOcurrences = std::count(str.begin(), str.end(), '[');
+					bool found = false;
+					int openBrackets = 0;
+					for (int i = beginPos; found == false; i++)
+					{
+						char c = dividedDescription[i];
+						if (c == '[')
+						{
+							openBrackets++;
+						}
+						else if (c == ']')
+						{
+							if (openBrackets == 0)
+							{
+								found = true;
+								endPos = i;
+							}
+							else
+							{
+								openBrackets--;
+							}
+						}
+					}					
 
-					treesArray->push_back(tree);*/
+					str = str.substr(beginPos, endPos-beginPos);
+					dividedDescription.erase(beginPos-1, endPos-beginPos+2);
 
+					int newId = *(idGenerator)+1;		
+					*(idGenerator) += 1;
+					Tree *tree = &(*treesArray)[newId];
+					tree->enabled = true;
+					tree->init(currentNode->transform, scene, treesArray, meshes, str, idGenerator);
+					tree->setAngle(angle);
+					tree->setAngleY(angleY);
+					tree->setSegmentLength(segmentLength);
+					tree->setSegmentThickness(segmentThickness);
+					tree->setCurrentRotY(currentRotY);
+					tree->setCurrentRotZ(currentRot);
 
+					//treesArray->push_back(tree);
+
+					k--; //we would jump over the next command as collateral result of the string deletion
 				}
 				else if (command == ']') //load node from memory
 				{
-						int aux = memoryNode->size();
+						/*int aux = memoryNode->size();
 						currentNode = &(*memoryNode)[aux-1];
 						memoryNode->pop_back();
 
@@ -158,7 +216,7 @@ namespace octet {
 
 						aux = memoryAngleY->size();
 						currentRotY = (*memoryAngleY)[aux - 1];
-						memoryAngleY->pop_back();
+						memoryAngleY->pop_back();*/
 
 				}				
 				else if (command == 'C') //change color (looking for next character)
@@ -196,12 +254,5 @@ namespace octet {
 			}
 			
 		}
-
-
-
-
-
-
-
 	};
 }

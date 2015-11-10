@@ -17,10 +17,14 @@ namespace octet {
 	ref<scene_node> player_node;
 
 	std::vector<Tree> *trees;
-	Tree tree;
+	Tree tree;	
 
 	int counter = 0;
 	int framesPerStep = 2;
+
+	std::vector<mesh_cylinder> *meshes;
+
+	int idGen = 1;
 
   public:
 	
@@ -31,6 +35,9 @@ namespace octet {
 
     /// this is called once OpenGL is initialized
     void app_init() {
+
+		meshes = new std::vector<mesh_cylinder>();
+
       app_scene =  new visual_scene();
       app_scene->create_default_camera_and_lights();
 	  the_camera = app_scene->get_camera_instance(0);
@@ -45,10 +52,16 @@ namespace octet {
       app_scene->add_child(node);
       //app_scene->add_mesh_instance(new mesh_instance(node, box, red));
 
+	  //meshes = new std::vector<mesh_cylinder>();
+
 	  rulesEngine.setAxiom("FX");		  
 	  rulesEngine.addRule("F", "C0F/F-[C1-F+F]+[C2+F-F]", 1);
-	  rulesEngine.addRule("X", "C0F*F++[C1+F/]+[C2-F]", 1);
-	  //rulesEngine.addRule("FF", "F*", 0.5f);
+	  rulesEngine.addRule("X", "C0F*F++[C1+F/F]+[C2-FF]", 1);
+	  ////rulesEngine.addRule("FF", "F*", 0.5f);
+
+	  /*rulesEngine.setAxiom("FX");		  
+	  rulesEngine.addRule("F", "C0FF-[C1-F+F]+[C2+F-F]", 1);
+	  rulesEngine.addRule("X", "C0FF+[C1+F]+[C3-F]", 1);*/
 
 	  std::string result1 = rulesEngine.iterate();
 	  std::string result2 = rulesEngine.iterate();
@@ -56,17 +69,20 @@ namespace octet {
 	  std::string result4 = rulesEngine.iterate();
 	  std::string result5 = rulesEngine.iterate();
 
-	  trees = new std::vector<Tree>();
+	  trees = new std::vector<Tree>(500);
 
 	  mat4t root;
 	  root.loadIdentity();
-	  tree.init(root, app_scene, trees, result3);
+	  tree.init(root, app_scene, trees, meshes, result3, &idGen);
 	  tree.setAngle(-25);
-	  tree.setAngleY(45);
+	  tree.setAngleY(20);
+	  //tree.setAngleY(0);
 	  tree.setSegmentLength(0.5f);
 	  tree.setSegmentThickness(0.05f);
 
 	  trees->push_back(tree);
+
+	  
 
 	  //std::thread second(tree->Grow, result3);
 	  //tree->Grow();
@@ -95,16 +111,16 @@ namespace octet {
     /// this is called to draw the world
     void draw_world(int x, int y, int w, int h) {	
 
-		counter++;
+		/*counter++;
 		if (counter > framesPerStep)
 		{
 			for (int i = 0; i < trees->size(); i++)
 			{
-				(*trees)[i].Grow();
-			}
-			//tree->Grow();
+				if ((*trees)[i].enabled)
+					(*trees)[i].Grow();
+			}			
 			counter = 0;
-		}
+		}*/
 
 
 	  app_scene->set_render_debug_lines(true);
@@ -130,8 +146,11 @@ namespace octet {
 	  //fps_helper.update(player_node, camera_node);
 	  if (is_key_going_down(key_ctrl))
 	  {
-		  tree.Grow();
-		  printf("growing");
+		  for (int i = 0; i < trees->size(); i++)
+		  {
+			  if ((*trees)[i].enabled)
+				  (*trees)[i].Grow();
+		  }
 	  }
 
 

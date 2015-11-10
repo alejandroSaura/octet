@@ -18,7 +18,7 @@ namespace octet {
 		octet::TreeNode *endNode;
 
 
-		TreeNode Init(ref<visual_scene> scene)
+		TreeNode Init(ref<visual_scene> scene, std::vector<mesh_cylinder> *meshes)
 		{
 			vec4 localUp;
 			vec4 localRight;
@@ -46,9 +46,14 @@ namespace octet {
 				cylTransform.translate(localRight*lenght / 2);
 
 				zcylinder *mathCylinder = new zcylinder(vec3(0, 0, 0), thickness, lenght / 2);
-				cylinder = new mesh_cylinder(*mathCylinder, cylTransform);
+				cylinder = new mesh_cylinder(*mathCylinder, cylTransform, 32);
+				//cylinder.get_mesh()
+				//meshes->push_back(cylinder);
 			}
 
+			
+			//mesh_cylinder m = (*meshes)[meshes->size() - 1];
+			//scene->add_shape(transformMatrix, (*meshes)[meshes->size()-1].get_mesh(), new material(color), false);
 			scene->add_shape(transformMatrix, cylinder, new material(color), false);
 
 			//scene->add_shape(transformMatrix, new mesh_box(vec3(0.2f, 0.2f, 0.2f)), new material(color), false);	
