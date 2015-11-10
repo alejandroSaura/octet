@@ -119,9 +119,45 @@ namespace octet {
 				//for each character of the state string
 				for (int i = 0; i < rules.size(); i++)
 				{
-					char aux1 = rules[i].leftSide.c_str()[0];
+					std::string aux1 = std::string(rules[i].leftSide);
+					int l = aux1.length();
+					
+					if (l > 1)
+					{
+						bool match = true;						
+						for (int u = 0; u < l; u++)
+						{
+							if (rules[i].leftSide.c_str()[u] != dividedState[k + u])
+							{
+								match = false;
+								break;
+							}
+						}
+						if (match)
+						{
+							float random = 0.9f; //TO-DO: make it random!
+							int j = 0;
+							for (j = 0; j < (rules[i].rightSides)->size(); j++)
+							{
+								if (((rules[i].rightSides)->operator[](j)).probability > random)
+								{
+									break;
+								}
+							}
+							RightSide s = (rules[i].rightSides)->operator[](j);
+
+							//Put this right side instead of the character
+							result.push_back(s.st);
+							ruleApplied = true;
+						}
+					}
+					/*if (rules[i].leftSide.c_str()[0] == dividedState[k] && )
+					{
+					}*/
+
 					//check if we can apply each rule (if the left side of any rule is this concrete character)
-					if (rules[i].leftSide.c_str()[0] == dividedState[k])
+					//we give priority to multiple characters rules
+					if (rules[i].leftSide.c_str()[0] == dividedState[k] && ruleApplied == false)
 					{
 						//TO-DO: maybe we could add here some more conditions, as check the neighbours
 

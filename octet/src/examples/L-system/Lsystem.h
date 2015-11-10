@@ -38,14 +38,16 @@ namespace octet {
       //app_scene->add_mesh_instance(new mesh_instance(node, box, red));
 
 	  rulesEngine.setAxiom("FX");		  
-	  rulesEngine.addRule("F", "C0FF-[C1-F+F]+[C2+F-F]", 1);
-	  rulesEngine.addRule("X", "C0FF+[C1+F]+[C2-F]", 1);
+	  rulesEngine.addRule("F", "C0F/F-[C1-F+F]+[C2+F-F]", 1);
+	  rulesEngine.addRule("X", "C0F*F++[C1+F/]+[C2-F]", 1);
+	  //rulesEngine.addRule("FF", "F*", 0.5f);
 
 	  mat4t *root = new mat4t();
 	  Tree *tree = new Tree(root, app_scene);
-	  tree->setAngle(-20);
-	  tree->setSegmentLength(0.5f);
-	  tree->setSegmentThickness(0.1f);
+	  tree->setAngle(-25);
+	  tree->setAngleY(45);
+	  tree->setSegmentLength(0.5f);	 
+	  tree->setSegmentThickness(0.05f);
 
 	  std::string result1 = rulesEngine.iterate();
 	  std::string result2 = rulesEngine.iterate();

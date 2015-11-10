@@ -14,6 +14,7 @@ namespace octet {
 		TreeNode *currentNode;
 		dynarray<TreeNode> memoryNode;
 		dynarray<float> memoryAngle;
+		dynarray<float> memoryAngleY;
 
 		dynarray<TreeSegment> segments;
 		dynarray<TreeNode> nodes;
@@ -21,7 +22,9 @@ namespace octet {
 		vec4 currentColor;
 
 		float angle = 20;
+		float angleY = 0;
 		float currentRot;
+		float currentRotY;
 
 	public:
 		Tree(mat4t *_root, ref<visual_scene> _scene)
@@ -57,12 +60,18 @@ namespace octet {
 			angle = a;
 		}
 
+		void setAngleY(float y)
+		{
+			angleY = y;
+		}
+
 		void Update(std::string description)
 		{
 			const char *dividedDescription = description.c_str();			
 
 			currentNode = rootNode;
 			currentRot = 0;
+			currentRotY = 0;
 			for (int k = 0; k < strlen(dividedDescription); k++)
 			{
 				char command = dividedDescription[k];
@@ -74,7 +83,8 @@ namespace octet {
 					newSegment.lenght = segmentLength;
 					newSegment.startNode = currentNode;
 					newSegment.color = currentColor;
-					newSegment.rotZ = currentRot;	
+					newSegment.rotZ = currentRot;
+					newSegment.rotY = currentRotY;
 
 					//draw segment
 					TreeNode n = newSegment.Init(scene);
@@ -92,10 +102,14 @@ namespace octet {
 				}
 				else if (command == '[') //save node in memory
 				{
-					TreeNode n = *currentNode;
-					float a = currentRot;
+					TreeNode n = *currentNode;					
 					memoryNode.push_back(n);
+
+					float a = currentRot;
 					memoryAngle.push_back(a);
+
+					float y = currentRotY;
+					memoryAngleY.push_back(y);
 				}
 				else if (command == ']') //load node from memory
 				{
@@ -106,6 +120,10 @@ namespace octet {
 						aux = memoryAngle.size();
 						currentRot = memoryAngle[aux - 1];
 						memoryAngle.pop_back();
+
+						aux = memoryAngleY.size();
+						currentRotY = memoryAngleY[aux - 1];
+						memoryAngleY.pop_back();
 
 				}				
 				else if (command == 'C') //change color (looking for next character)
@@ -130,6 +148,14 @@ namespace octet {
 				else if (command == '+') //rotate +
 				{
 					currentRot += angle;
+				}
+				else if (command == '*') //rotate + Y
+				{
+					currentRotY += angleY;
+				}
+				else if (command == '/') //rotate - Y
+				{
+					currentRotY -= angleY;
 				}
 			}
 		}
