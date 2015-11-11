@@ -1,4 +1,5 @@
 #include "TreeNode.h"
+#include "TreeLeaf.h"
 #include "TreeSegment.h"
 
 namespace octet {
@@ -25,6 +26,7 @@ namespace octet {
 		std::vector<mesh_cylinder> *meshes;
 		std::vector<TreeSegment> *segments;
 		std::vector<TreeNode> *nodes;
+		std::vector<TreeLeaf> *leafs;
 
 		std::vector<Tree> *treesArray;
 
@@ -73,7 +75,8 @@ namespace octet {
 			memoryNode = new std::vector<TreeNode>();
 
 			segments = new std::vector<TreeSegment>();
-			nodes = new std::vector<TreeNode>();		
+			nodes = new std::vector<TreeNode>();
+			leafs = new std::vector<TreeLeaf>();
 
 			meshes = m;
 
@@ -181,10 +184,12 @@ namespace octet {
 			while (k < strlen(s))
 			{
 				char command = dividedDescription[k];
-				if (command == 'X') //create leaf
+				if (command == 'L') //create leaf
 				{
 					//create a leaf from current node 
-					
+					TreeLeaf leaf;
+					leaf.Init(scene, currentNode);
+					leafs->push_back(leaf);
 
 					k++;
 					return; //break the execution until next step!

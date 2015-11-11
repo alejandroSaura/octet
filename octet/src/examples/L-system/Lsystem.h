@@ -58,6 +58,8 @@ namespace octet {
 	  rulesEngine.addRule("F", "C0F/F-[C1-F+F]+[C2+F-F]", 1);
 	  rulesEngine.addRule("X", "C0F*F++[C1+F/F]+[C2-FF]", 0.30f);
 	  rulesEngine.addRule("X", "C0F**F", 0.70f);
+	  //rulesEngine.addRule("]", "L]", 1); //add intermediate leaves
+	  
 	  ////rulesEngine.addRule("FF", "F*", 0.5f);
 
 	  //basic single branch probability example
@@ -68,14 +70,16 @@ namespace octet {
 	  std::string result1 = rulesEngine.iterate();
 	  std::string result2 = rulesEngine.iterate();
 	  std::string result3 = rulesEngine.iterate();
+	  rulesEngine.clearRules();
+	  rulesEngine.addRule("]", "L]", 1); //add end leaves
 	  std::string result4 = rulesEngine.iterate();
-	  std::string result5 = rulesEngine.iterate();
+	  
 
 	  trees = new std::vector<Tree>(500);
 
 	  mat4t root;
 	  root.loadIdentity();
-	  tree.init(root, app_scene, trees, meshes, result3, &idGen, framesPerStep);
+	  tree.init(root, app_scene, trees, meshes, result4, &idGen, framesPerStep);
 	  tree.setAngle(-25);
 	  tree.setAngleY(20);
 	  //tree.setAngleY(0);

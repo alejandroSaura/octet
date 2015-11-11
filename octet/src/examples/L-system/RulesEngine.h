@@ -71,6 +71,11 @@ namespace octet {
 			}
 		}
 
+		void clearRules()
+		{
+			rules.reset();
+		}
+
 		void addRule(const char *left, const char *right, float weight)
 		{
 			for (int i = 0; i < rules.size(); i++)
