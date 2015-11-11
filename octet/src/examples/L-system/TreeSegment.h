@@ -11,9 +11,9 @@ namespace octet {
 
 		float thicknessSpeed = 0.0005f;
 
-		vec4 initialColor;
-		vec4 finalColor;
-		int framesUntilFinalColor;
+		vec4 initialColor = vec4(0.50196078431f, 0.50196078431f, 0, 0);
+		vec4 finalColor = vec4(0.271f, 0.192f, 0.047f, 0);
+		int framesUntilFinalColor = 200;
 		int t;
 
 		int framesPerStep = 0;
@@ -64,6 +64,7 @@ namespace octet {
 			mate->set_diffuse(color);
 			meshI->set_material(mate);
 			t++;
+			if (t > framesUntilFinalColor) t = framesUntilFinalColor;
 
 			float currentLenght = currentFrame*(lenght / framesPerStep);
 
@@ -93,11 +94,12 @@ namespace octet {
 		}
 
 
-		TreeNode Init(ref<visual_scene> scene, std::vector<mesh_cylinder> *meshes, int fps)
+		TreeNode Init(ref<visual_scene> scene, std::vector<mesh_cylinder> *meshes, int fps, vec4 _initialColor, vec4 _finalColor, int _framesUntilFinalColor)
 		{
-			framesUntilFinalColor = 100;
-			initialColor = vec4(0.6f, 1, 0.2f, 0);
-			finalColor = vec4(0.6f, 0.2862f, 0, 0);
+			initialColor = _initialColor;
+			finalColor = _finalColor;
+			framesUntilFinalColor = _framesUntilFinalColor;
+			
 			t = 0;
 			color = initialColor;
 

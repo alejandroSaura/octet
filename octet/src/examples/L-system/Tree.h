@@ -10,6 +10,10 @@ namespace octet {
 		float segmentLength = 1;
 		float segmentThickness = 0.05f;
 
+		int framesUntilFinalColor = 200;
+		vec4 initialColor = vec4(0, 0, 0);
+		vec4 finalColor = vec4(0, 0, 0);
+
 		ref<visual_scene> scene;
 
 		TreeNode rootNode;
@@ -115,6 +119,20 @@ namespace octet {
 			currentRotY = y;
 		}
 
+		void setInitialColor(vec4 c)
+		{
+			initialColor = c;
+		}
+		void setFinalColor(vec4 c)
+		{
+			finalColor = c;
+		}
+
+		void setFramesUntilFinalColor(int f)
+		{
+			framesUntilFinalColor = f;
+		}
+
 		void GrowSegments()
 		{
 			//make the segments grow
@@ -176,7 +194,7 @@ namespace octet {
 					
 
 					//draw segment
-					TreeNode n = newSegment.Init(scene, meshes, framesPerStep);
+					TreeNode n = newSegment.Init(scene, meshes, framesPerStep, initialColor, finalColor, framesUntilFinalColor);
 
 					//push created node and assign to segment					
 					nodes->push_back(n);
@@ -247,6 +265,9 @@ namespace octet {
 					tree->setSegmentThickness(segmentThickness);
 					tree->setCurrentRotY(currentRotY);
 					tree->setCurrentRotZ(currentRot);
+					tree->setInitialColor(initialColor);
+					tree->setFinalColor(finalColor);
+					tree->setFramesUntilFinalColor(framesUntilFinalColor);
 
 					childrenTrees->push_back(tree);
 

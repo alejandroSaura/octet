@@ -56,7 +56,8 @@ namespace octet {
 
 	  rulesEngine.setAxiom("FX");		  
 	  rulesEngine.addRule("F", "C0F/F-[C1-F+F]+[C2+F-F]", 1);
-	  rulesEngine.addRule("X", "C0F*F++[C1+F/F]+[C2-FF]", 1);
+	  rulesEngine.addRule("X", "C0F*F++[C1+F/F]+[C2-FF]", 0.55f);
+	  rulesEngine.addRule("X", "C0F**F", 0.45f);
 	  ////rulesEngine.addRule("FF", "F*", 0.5f);
 
 	  //basic single branch probability example
@@ -80,6 +81,9 @@ namespace octet {
 	  //tree.setAngleY(0);
 	  tree.setSegmentLength(0.5f);
 	  tree.setSegmentThickness(0.005f);
+	  tree.setInitialColor(vec4(0.50196078431f, 0.50196078431f, 0, 0));
+	  tree.setFinalColor(vec4(0.271f, 0.192f, 0.047f, 0));
+	  tree.setFramesUntilFinalColor(200);  
 
 	  trees->push_back(tree);
 
@@ -110,23 +114,26 @@ namespace octet {
     
     void draw_world(int x, int y, int w, int h) {	
 
-		//new segments creation
-		counter++;
-		if (counter > framesPerStep)
+		if (is_key_down(key_ctrl))
 		{
+			//new segments creation
+			counter++;
+			if (counter > framesPerStep)
+			{
+				for (int i = 0; i < trees->size(); i++)
+				{
+					if ((*trees)[i].enabled)
+						(*trees)[i].Grow();
+				}
+				counter = 0;
+			}
+
+			//segment growing
 			for (int i = 0; i < trees->size(); i++)
 			{
 				if ((*trees)[i].enabled)
-					(*trees)[i].Grow();
-			}			
-			counter = 0;
-		}
-
-		//segment growing
-		for (int i = 0; i < trees->size(); i++)
-		{
-			if ((*trees)[i].enabled)
-				(*trees)[i].GrowSegments();
+					(*trees)[i].GrowSegments();
+			}
 		}
 
 
@@ -150,15 +157,7 @@ namespace octet {
 	  mat4t &camera_to_world = camera_node->access_nodeToParent();
 	  mouse_look_helper.update(camera_to_world);
 
-	  //fps_helper.update(player_node, camera_node);
-	  if (is_key_going_down(key_ctrl))
-	  {
-		  for (int i = 0; i < trees->size(); i++)
-		  {
-			  if ((*trees)[i].enabled)
-				  (*trees)[i].Grow();
-		  }
-	  }
+	  
 
 
 	  if (is_key_down(key_left))
