@@ -3,6 +3,8 @@ namespace octet {
 
 	class TreeSegment
 	{
+		float g = 0;
+
 	public:		
 		
 		float rotX, rotY, rotZ;
@@ -17,12 +19,43 @@ namespace octet {
 		octet::TreeNode *startNode;
 		octet::TreeNode *endNode;
 
+		mesh_cylinder *cylinder;
+
+		vec4 localUp;
+		vec4 localRight;
+		vec4 localForward;		
+
+		
+
+		void Grow()
+		{
+			
+
+			printf("segment growing!\n");
+			transformMatrix = startNode->transform;
+
+			mat4t transformMatrixInv;
+			transformMatrix.invertQuick(transformMatrixInv);
+
+			mat4t cylTransform;
+			cylTransform.loadIdentity();
+			cylTransform.rotate(90, 1, 0, 0);
+			cylTransform.invertQuick(transformMatrixInv);
+			localRight = vec4(0, 1, 0, 0) * transformMatrixInv;
+			//cylTransform.translate(localRight*lenght / 2);
+
+			zcylinder *mathCylinder = new zcylinder(vec3(0, 0, 0), thickness, g);
+			//mesh_cylinder c;
+			cylinder->clear_attributes();
+			cylinder->set_size(*mathCylinder, cylTransform, 32);
+
+			g += 0.1;
+		}
+
 
 		TreeNode Init(ref<visual_scene> scene, std::vector<mesh_cylinder> *meshes)
 		{
-			vec4 localUp;
-			vec4 localRight;
-			vec4 localForward;
+			
 
 			//locate the start point
 			transformMatrix = startNode->transform;
@@ -36,7 +69,7 @@ namespace octet {
 			transformMatrix.rotate(rotY, 0, 1, 0);
 
 			//create, rotate and locate the cylinder
-			mesh_cylinder *cylinder;
+			
 			{
 				mat4t cylTransform;
 				cylTransform.loadIdentity();

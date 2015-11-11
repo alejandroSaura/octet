@@ -20,7 +20,7 @@ namespace octet {
 	Tree tree;	
 
 	int counter = 0;
-	int framesPerStep = 2;
+	int framesPerStep = 5;
 
 	std::vector<mesh_cylinder> *meshes;
 
@@ -111,7 +111,7 @@ namespace octet {
     /// this is called to draw the world
     void draw_world(int x, int y, int w, int h) {	
 
-		/*counter++;
+		counter++;
 		if (counter > framesPerStep)
 		{
 			for (int i = 0; i < trees->size(); i++)
@@ -120,7 +120,7 @@ namespace octet {
 					(*trees)[i].Grow();
 			}			
 			counter = 0;
-		}*/
+		}
 
 
 	  app_scene->set_render_debug_lines(true);

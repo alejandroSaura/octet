@@ -112,7 +112,18 @@ namespace octet {
 				currentNode = &(*nodes)[aux - 1];
 			}
 
-			//for (k; k < strlen(dividedDescription); k++)
+			//we could have finished the render of this branch, but still need to make segments grow
+			if (k >= strlen(s))
+			{
+				//make the segments grow
+				for (int j = 0; j < segments->size(); j++)
+				{
+					TreeSegment segment = (*segments)[j];
+					(*segments)[j].Grow();
+				}
+			}
+
+
 			while (k < strlen(s))
 			{
 				char command = dividedDescription[k];
@@ -137,11 +148,19 @@ namespace octet {
 					newSegment.endNode = &n;
 
 					//push it to the segments array					
-					//segments.push_back(newSegment);
+					segments->push_back(newSegment);
 
 					//advance currentNode to the end of the new segment
 					currentNode = &n;
 					k++;
+
+					//make the segments grow
+					for (int j = 0; j < segments->size(); j++)
+					{
+						TreeSegment segment = (*segments)[j];
+						(*segments)[j].Grow();
+					}
+
 					return; //break the execution until next step!
 				}
 				else if (command == '[') //create a new tree from the current node
