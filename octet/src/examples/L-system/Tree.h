@@ -127,6 +127,16 @@ namespace octet {
 				currentNode = &(*nodes)[aux - 1];
 			}
 
+			if (k >= strlen(s)) //we have nothing else to grow, stop branches getting thicker
+			{
+				//make the segments grow
+				for (int j = 0; j < segments->size(); j++)
+				{
+					TreeSegment segment = (*segments)[j];
+					(*segments)[j].dead = true;
+				}
+			}
+
 			while (k < strlen(s))
 			{
 				char command = dividedDescription[k];

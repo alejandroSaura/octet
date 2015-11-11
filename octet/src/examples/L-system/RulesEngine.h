@@ -105,6 +105,8 @@ namespace octet {
 
 		std::string iterate()
 		{
+			srand(time(NULL));
+
 			const char *dividedState = state.c_str();
 			dynarray<string> result;
 
@@ -135,7 +137,11 @@ namespace octet {
 						}
 						if (match)
 						{
-							float random = 0.9f; //TO-DO: make it random!
+
+							float random = (float)((rand() % 10)*0.1);
+							//float random = 0.9f; //TO-DO: make it random!
+
+
 							int j = 0;
 							for (j = 0; j < (rules[i].rightSides)->size(); j++)
 							{
@@ -162,7 +168,8 @@ namespace octet {
 						//TO-DO: maybe we could add here some more conditions, as check the neighbours
 
 						//Select one of the posible right sides of the rules
-						float random = 0.9f; //TO-DO: make it random!
+
+						float random = (float)((rand() % 10)*0.1);
 						int j = 0;
 						for (j = 0; j < (rules[i].rightSides)->size(); j++)
 						{
