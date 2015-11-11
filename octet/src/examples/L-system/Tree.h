@@ -24,6 +24,9 @@ namespace octet {
 
 		std::vector<Tree> *treesArray;
 
+		std::vector<Tree*> *childrenTrees;
+
+
 		vec4 currentColor;
 
 		float angle = 20;
@@ -37,11 +40,15 @@ namespace octet {
 		int* idGenerator;
 		int id;
 
+		bool stringFinished = false;
+
 	public:
 		bool enabled = false;		
 
 		void init(mat4t _root, ref<visual_scene> _scene, std::vector<Tree> *t, std::vector<mesh_cylinder> *m, std::string description, int *idGen, int framesPStep)
 		{
+			stringFinished = false;
+
 			id = *idGen;
 			//*idGen++;
 			idGenerator = idGen;
@@ -50,6 +57,8 @@ namespace octet {
 			framesPerStep = framesPStep;
 
 			treesArray = t;
+
+			childrenTrees = new std::vector<Tree*>();
 
 			rootNode = *(new TreeNode());
 			rootNode.parent = nullptr;
@@ -121,13 +130,27 @@ namespace octet {
 		{		
 			const char* s = dividedDescription.c_str();
 
+			if (k >= strlen(s))
+			{
+				stringFinished = true;
+			}
+
 			int aux = nodes->size();
 			if (aux > 0)
 			{
 				currentNode = &(*nodes)[aux - 1];
 			}
 
-			if (k >= strlen(s)) //we have nothing else to grow, stop branches getting thicker
+			bool allDead = true;
+			//check if our children trees are dead
+			for (int i = 0; i < childrenTrees->size(); i++)
+			{				
+					if ((*childrenTrees)[i]->stringFinished == false)
+					{
+						allDead = false;
+					}				
+			}
+			if (stringFinished && allDead) //we have nothing else to grow, stop branches getting thicker
 			{
 				//make the segments grow
 				for (int j = 0; j < segments->size(); j++)
@@ -225,7 +248,7 @@ namespace octet {
 					tree->setCurrentRotY(currentRotY);
 					tree->setCurrentRotZ(currentRot);
 
-					//treesArray->push_back(tree);
+					childrenTrees->push_back(tree);
 
 					k--; //we would jump over the next command as collateral result of the string deletion
 				}

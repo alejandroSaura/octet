@@ -54,14 +54,15 @@ namespace octet {
 
 	  //meshes = new std::vector<mesh_cylinder>();
 
-	 /* rulesEngine.setAxiom("FX");		  
+	  rulesEngine.setAxiom("FX");		  
 	  rulesEngine.addRule("F", "C0F/F-[C1-F+F]+[C2+F-F]", 1);
-	  rulesEngine.addRule("X", "C0F*F++[C1+F/F]+[C2-FF]", 1);*/
+	  rulesEngine.addRule("X", "C0F*F++[C1+F/F]+[C2-FF]", 1);
 	  ////rulesEngine.addRule("FF", "F*", 0.5f);
 
-	  rulesEngine.setAxiom("F");		  
+	  //basic single branch probability example
+	  /*rulesEngine.setAxiom("F");		  
 	  rulesEngine.addRule("F", "F+F+F", 0.6f);
-	  rulesEngine.addRule("F", "F-F-F", 0.4f);
+	  rulesEngine.addRule("F", "F-F-F", 0.4f);*/
 
 	  std::string result1 = rulesEngine.iterate();
 	  std::string result2 = rulesEngine.iterate();
@@ -73,7 +74,7 @@ namespace octet {
 
 	  mat4t root;
 	  root.loadIdentity();
-	  tree.init(root, app_scene, trees, meshes, result5, &idGen, framesPerStep);
+	  tree.init(root, app_scene, trees, meshes, result3, &idGen, framesPerStep);
 	  tree.setAngle(-25);
 	  tree.setAngleY(20);
 	  //tree.setAngleY(0);

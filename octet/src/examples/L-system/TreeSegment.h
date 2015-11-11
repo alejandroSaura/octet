@@ -7,13 +7,21 @@ namespace octet {
 
 	public:		
 
+		mesh_instance *meshI;
+
 		float thicknessSpeed = 0.0005f;
+
+		vec4 initialColor;
+		vec4 finalColor;
+		int framesUntilFinalColor;
+		int t;
 
 		int framesPerStep = 0;
 		int currentFrame = 0;
 		
 		float rotX, rotY, rotZ;
 		float thickness;
+		material *mate;
 		vec4 color;
 		float lenght = 1;
 
@@ -50,6 +58,13 @@ namespace octet {
 				currentFrame++;
 			}
 
+			float aux = ((float)t / (float)framesUntilFinalColor);
+			color = finalColor*aux + initialColor*(1 - aux);
+			//color = vec4(1, 0, 0, 0);
+			mate->set_diffuse(color);
+			meshI->set_material(mate);
+			t++;
+
 			float currentLenght = currentFrame*(lenght / framesPerStep);
 
 			printf("segment growing!\n");
@@ -80,6 +95,13 @@ namespace octet {
 
 		TreeNode Init(ref<visual_scene> scene, std::vector<mesh_cylinder> *meshes, int fps)
 		{
+			framesUntilFinalColor = 100;
+			initialColor = vec4(0.6f, 1, 0.2f, 0);
+			finalColor = vec4(0.6f, 0.2862f, 0, 0);
+			t = 0;
+			color = initialColor;
+
+
 			framesPerStep = fps;
 			currentFrame = 0;
 			done = false;
@@ -114,7 +136,8 @@ namespace octet {
 			
 			//mesh_cylinder m = (*meshes)[meshes->size() - 1];
 			//scene->add_shape(transformMatrix, (*meshes)[meshes->size()-1].get_mesh(), new material(color), false);
-			scene->add_shape(transformMatrix, cylinder, new material(color), false);
+			mate = new material(color);
+			meshI = scene->add_shape(transformMatrix, cylinder, mate, false);
 
 			//scene->add_shape(transformMatrix, new mesh_box(vec3(0.2f, 0.2f, 0.2f)), new material(color), false);	
 
