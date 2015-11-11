@@ -6,6 +6,9 @@ namespace octet {
 		float g = 0;
 
 	public:		
+
+		int framesPerStep = 0;
+		int currentFrame = 0;
 		
 		float rotX, rotY, rotZ;
 		float thickness;
@@ -25,11 +28,14 @@ namespace octet {
 		vec4 localRight;
 		vec4 localForward;		
 
-		
+		bool done;
 
 		void Grow()
 		{
-			
+			if (done) return;
+			currentFrame++;
+
+			float currentLenght = currentFrame*(lenght / framesPerStep);
 
 			printf("segment growing!\n");
 			transformMatrix = startNode->transform;
@@ -42,20 +48,26 @@ namespace octet {
 			cylTransform.rotate(90, 1, 0, 0);
 			cylTransform.invertQuick(transformMatrixInv);
 			localRight = vec4(0, 1, 0, 0) * transformMatrixInv;
-			//cylTransform.translate(localRight*lenght / 2);
+			cylTransform.translate(localRight*currentLenght/2);
 
-			zcylinder *mathCylinder = new zcylinder(vec3(0, 0, 0), thickness, g);
+			zcylinder *mathCylinder = new zcylinder(vec3(0, 0, 0), thickness, currentLenght/2);
 			//mesh_cylinder c;
 			cylinder->clear_attributes();
 			cylinder->set_size(*mathCylinder, cylTransform, 32);
 
-			g += 0.1;
+			
+			if (currentFrame > framesPerStep)
+			{
+				done = true;
+			}
 		}
 
 
-		TreeNode Init(ref<visual_scene> scene, std::vector<mesh_cylinder> *meshes)
+		TreeNode Init(ref<visual_scene> scene, std::vector<mesh_cylinder> *meshes, int fps)
 		{
-			
+			framesPerStep = fps;
+			currentFrame = 0;
+			done = false;
 
 			//locate the start point
 			transformMatrix = startNode->transform;

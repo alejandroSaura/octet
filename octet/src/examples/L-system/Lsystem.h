@@ -20,7 +20,7 @@ namespace octet {
 	Tree tree;	
 
 	int counter = 0;
-	int framesPerStep = 5;
+	int framesPerStep = 20;
 
 	std::vector<mesh_cylinder> *meshes;
 
@@ -73,7 +73,7 @@ namespace octet {
 
 	  mat4t root;
 	  root.loadIdentity();
-	  tree.init(root, app_scene, trees, meshes, result3, &idGen);
+	  tree.init(root, app_scene, trees, meshes, result3, &idGen, framesPerStep);
 	  tree.setAngle(-25);
 	  tree.setAngleY(20);
 	  //tree.setAngleY(0);
@@ -105,12 +105,11 @@ namespace octet {
 		  );
 	  player_node = mi->get_node();  
 
-    }
-
-	
-    /// this is called to draw the world
+    }	
+    
     void draw_world(int x, int y, int w, int h) {	
 
+		//new segments creation
 		counter++;
 		if (counter > framesPerStep)
 		{
@@ -120,6 +119,13 @@ namespace octet {
 					(*trees)[i].Grow();
 			}			
 			counter = 0;
+		}
+
+		//segment growing
+		for (int i = 0; i < trees->size(); i++)
+		{
+			if ((*trees)[i].enabled)
+				(*trees)[i].GrowSegments();
 		}
 
 

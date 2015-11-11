@@ -5,6 +5,8 @@ namespace octet {
 
 	class Tree
 	{
+		int framesPerStep = 0;
+
 		float segmentLength = 1;
 		float segmentThickness = 0.05f;
 
@@ -38,12 +40,14 @@ namespace octet {
 	public:
 		bool enabled = false;		
 
-		void init(mat4t _root, ref<visual_scene> _scene, std::vector<Tree> *t, std::vector<mesh_cylinder> *m, std::string description, int *idGen)
+		void init(mat4t _root, ref<visual_scene> _scene, std::vector<Tree> *t, std::vector<mesh_cylinder> *m, std::string description, int *idGen, int framesPStep)
 		{
 			id = *idGen;
 			//*idGen++;
 			idGenerator = idGen;
 			enabled = true;
+
+			framesPerStep = framesPStep;
 
 			treesArray = t;
 
@@ -102,6 +106,17 @@ namespace octet {
 			currentRotY = y;
 		}
 
+		void GrowSegments()
+		{
+			//make the segments grow
+			for (int j = 0; j < segments->size(); j++)
+			{
+				TreeSegment segment = (*segments)[j];
+				(*segments)[j].Grow();
+			}
+		}
+
+
 		void Grow()
 		{		
 			const char* s = dividedDescription.c_str();
@@ -111,18 +126,6 @@ namespace octet {
 			{
 				currentNode = &(*nodes)[aux - 1];
 			}
-
-			//we could have finished the render of this branch, but still need to make segments grow
-			if (k >= strlen(s))
-			{
-				//make the segments grow
-				for (int j = 0; j < segments->size(); j++)
-				{
-					TreeSegment segment = (*segments)[j];
-					(*segments)[j].Grow();
-				}
-			}
-
 
 			while (k < strlen(s))
 			{
@@ -140,7 +143,7 @@ namespace octet {
 					
 
 					//draw segment
-					TreeNode n = newSegment.Init(scene, meshes);
+					TreeNode n = newSegment.Init(scene, meshes, framesPerStep);
 
 					//push created node and assign to segment					
 					nodes->push_back(n);
@@ -152,14 +155,7 @@ namespace octet {
 
 					//advance currentNode to the end of the new segment
 					currentNode = &n;
-					k++;
-
-					//make the segments grow
-					for (int j = 0; j < segments->size(); j++)
-					{
-						TreeSegment segment = (*segments)[j];
-						(*segments)[j].Grow();
-					}
+					k++;					
 
 					return; //break the execution until next step!
 				}
@@ -211,7 +207,7 @@ namespace octet {
 					*(idGenerator) += 1;
 					Tree *tree = &(*treesArray)[newId];
 					tree->enabled = true;
-					tree->init(currentNode->transform, scene, treesArray, meshes, str, idGenerator);
+					tree->init(currentNode->transform, scene, treesArray, meshes, str, idGenerator, framesPerStep);
 					tree->setAngle(angle);
 					tree->setAngleY(angleY);
 					tree->setSegmentLength(segmentLength);
