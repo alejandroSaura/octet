@@ -221,6 +221,7 @@
     <ClInclude Include="Lsystem.h" />
     <ClInclude Include="RulesEngine.h" />
     <ClInclude Include="Tree.h" />
+    <ClInclude Include="TreeLeaf.h" />
     <ClInclude Include="TreeNode.h" />
     <ClInclude Include="TreeSegment.h" />
   </ItemGroup>

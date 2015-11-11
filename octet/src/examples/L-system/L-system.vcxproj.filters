@@ -440,6 +440,9 @@
     <ClInclude Include="Tree.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="TreeLeaf.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl">
