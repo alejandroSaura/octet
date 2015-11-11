@@ -181,6 +181,14 @@ namespace octet {
 			while (k < strlen(s))
 			{
 				char command = dividedDescription[k];
+				if (command == 'X') //create leaf
+				{
+					//create a leaf from current node 
+					
+
+					k++;
+					return; //break the execution until next step!
+				}
 				if (command == 'F') //create segment
 				{					
 					//create a segment from current node 
@@ -206,8 +214,8 @@ namespace octet {
 
 					//advance currentNode to the end of the new segment
 					currentNode = &n;
-					k++;					
 
+					k++;		
 					return; //break the execution until next step!
 				}
 				else if (command == '[') //create a new tree from the current node
