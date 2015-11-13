@@ -1,8 +1,13 @@
+# define PI           3.14159265358979323846  /* pi */
+
 namespace octet
+
 {
 
 	class TreeLeaf
 	{
+		vec4 color = vec4(0, 0.439f, 0, 1);
+
 		mesh_instance *meshI;
 		mesh *m;
 		mat4t transformMatrix;
@@ -12,7 +17,7 @@ namespace octet
 
 	public:
 
-		float leafThickness = 0.05f;
+		float leafThickness = 0.01f;
 		float leafScale = 1;
 
 		void Init(visual_scene *scene, TreeNode *_startNode)
@@ -20,11 +25,33 @@ namespace octet
 			startNode = _startNode;
 
 			//locate the start point
-			transformMatrix = startNode->transform;
+			transformMatrix = startNode->transform;		
+			mat4t transformMatrixInv;
 
-			//create, rotate and locate the box
-			mat = new material(vec4(1, 0, 0, 1));
-			m = new mesh_box(vec3(0.1, 0.1, 0.1));
+			float rotY = 0; //calculate rotation for the leaf to face opposite to the origin.
+
+			transformMatrix.invertQuick(transformMatrixInv);
+			vec4 localForward = (vec4(0, 0, 1, 0) * transformMatrixInv);
+			vec3 pos = transformMatrix.getPosition();
+
+			vec2 forw2 = vec2(localForward.x(), localForward.z()).normalize();
+			vec2 pos2 = vec2(pos.x(), pos.z()).normalize();
+			float result = forw2.dot(pos2);
+			rotY = std::acosf(result)* 180/PI;
+			//if (result < 0) rotY *= -1;
+			transformMatrix.rotate(rotY, 0, 1, 0);
+
+			transformMatrix.invertQuick(transformMatrixInv);
+			vec4 localRight = (vec4(1, 0, 0, 0) * transformMatrixInv);
+			transformMatrix.rotate(-35, localRight.x(), localRight.y(), localRight.z());
+
+			transformMatrix.invertQuick(transformMatrixInv);
+			localForward = (vec4(0, 0, 1, 0) * transformMatrixInv);
+			transformMatrix.translate(localForward.xyz() *0.1f *leafScale/2);
+
+			//create and locate the box
+			mat = new material(color);
+			m = new mesh_box(vec3(0.05f*leafScale, leafThickness*leafScale, 0.1f *leafScale));
 			
 			scene->add_shape(transformMatrix, m, mat, false);
 		}

@@ -36,7 +36,7 @@ namespace octet {
     /// this is called once OpenGL is initialized
     void app_init() {
 
-		meshes = new std::vector<mesh_cylinder>();
+	meshes = new std::vector<mesh_cylinder>();
 
       app_scene =  new visual_scene();
       app_scene->create_default_camera_and_lights();
@@ -49,7 +49,7 @@ namespace octet {
       material *red = new material(vec4(1, 0, 0, 1));
       mesh_box *box = new mesh_box(vec3(4));
       scene_node *node = new scene_node();
-      app_scene->add_child(node);
+     // app_scene->add_child(node);
       //app_scene->add_mesh_instance(new mesh_instance(node, box, red));
 
 	  //meshes = new std::vector<mesh_cylinder>();
@@ -93,9 +93,7 @@ namespace octet {
 
 	  
 
-	  //std::thread second(tree->Grow, result3);
-	  //tree->Grow();
-
+	 
 
 	  float player_height = 1.83f;
 	  float player_radius = 0.25f;
@@ -103,7 +101,7 @@ namespace octet {
 
 	  mat4t mat;
 	  mat.loadIdentity();
-	  mat.translate(0, player_height*0.5f, -50);
+	  mat.translate(0, player_height*0.5f, -10);
 
 	  mesh_instance *mi = app_scene->add_shape(
 		  mat,
@@ -112,6 +110,7 @@ namespace octet {
 		  false, player_mass,
 		  new btCapsuleShape(0.25f, player_height)
 		  );
+	  
 	  player_node = mi->get_node();  
 
     }	
