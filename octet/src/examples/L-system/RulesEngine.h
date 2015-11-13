@@ -21,13 +21,14 @@ namespace octet {
 		void calculateProbabilities(dynarray<RightSide> &array)
 		{
 			float totalWeight = 0;
-			for (int i = 0; i < array.size(); i++)
+			int m = array.size();
+			for (int i = 0; i < m; i++)
 			{
 				totalWeight += array[i].weight;
 			}
 
 			float lastProbability = 0;
-			for (int i = 0; i < array.size(); i++)
+			for (int i = 0; i < m; i++)
 			{
 				float p = array[i].weight/totalWeight;
 				array[i].probability = lastProbability + p;
@@ -78,7 +79,8 @@ namespace octet {
 
 		void addRule(const char *left, const char *right, float weight)
 		{
-			for (int i = 0; i < rules.size(); i++)
+			int s = rules.size();
+			for (int i = 0; i < s; i++)
 			{
 				if (rules[i].leftSide.operator==(string(left)))
 				{
@@ -124,7 +126,8 @@ namespace octet {
 				ruleApplied = false;
 
 				//for each character of the state string
-				for (int i = 0; i < rules.size(); i++)
+				int s = rules.size();
+				for (int i = 0; i < s; i++)
 				{
 					std::string aux1 = std::string(rules[i].leftSide);
 					int l = aux1.length();
@@ -148,7 +151,8 @@ namespace octet {
 
 
 							int j = 0;
-							for (j = 0; j < (rules[i].rightSides)->size(); j++)
+							int max = (rules[i].rightSides)->size();
+							for (j = 0; j < max; j++)
 							{
 								if (((rules[i].rightSides)->operator[](j)).probability > random)
 								{
@@ -176,7 +180,8 @@ namespace octet {
 
 						float random = (float)((rand() % 10)*0.1);
 						int j = 0;
-						for (j = 0; j < (rules[i].rightSides)->size(); j++)
+						int max = (rules[i].rightSides)->size();
+						for (j = 0; j < max; j++)
 						{
 							if (((rules[i].rightSides)->operator[](j)).probability > random)
 							{
@@ -199,7 +204,8 @@ namespace octet {
 			}
 
 			state = "";
-			for (int i = 0; i < result.size(); i++)
+			int resMax = result.size();
+			for (int i = 0; i < resMax; i++)
 			{
 				state += result[i].c_str();
 			}

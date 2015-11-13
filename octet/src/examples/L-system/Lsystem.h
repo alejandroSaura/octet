@@ -120,11 +120,12 @@ namespace octet {
 
 		if (is_key_down(key_ctrl))
 		{
+			int max = trees->size();
 			//new segments creation
 			counter++;
 			if (counter > framesPerStep)
-			{
-				for (int i = 0; i < trees->size(); i++)
+			{				
+				for (int i = 0; i < max; i++)
 				{
 					if ((*trees)[i].enabled)
 						(*trees)[i].Grow();
@@ -133,7 +134,8 @@ namespace octet {
 			}
 
 			//segment growing
-			for (int i = 0; i < trees->size(); i++)
+			
+			for (int i = 0; i < max; i++)
 			{
 				if ((*trees)[i].enabled)
 					(*trees)[i].GrowSegments();

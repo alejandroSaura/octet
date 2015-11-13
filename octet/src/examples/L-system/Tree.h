@@ -139,7 +139,8 @@ namespace octet {
 		void GrowSegments()
 		{
 			//make the segments grow
-			for (int j = 0; j < segments->size(); j++)
+			int max = segments->size();
+			for (int j = 0; j < max; j++)
 			{
 				TreeSegment segment = (*segments)[j];
 				(*segments)[j].Grow();
@@ -164,7 +165,8 @@ namespace octet {
 
 			bool allDead = true;
 			//check if our children trees are dead
-			for (int i = 0; i < childrenTrees->size(); i++)
+			int max = childrenTrees->size();
+			for (int i = 0; i < max; i++)
 			{				
 					if ((*childrenTrees)[i]->stringFinished == false)
 					{
@@ -174,7 +176,8 @@ namespace octet {
 			if (stringFinished && allDead) //we have nothing else to grow, stop branches getting thicker
 			{
 				//make the segments grow
-				for (int j = 0; j < segments->size(); j++)
+				int m = segments->size();
+				for (int j = 0; j < m; j++)
 				{
 					TreeSegment segment = (*segments)[j];
 					(*segments)[j].dead = true;
