@@ -39,7 +39,7 @@ namespace octet { namespace shaders {
         fputs(buf, log("program errors during linking\n"));
         printf("program errors during linking: check log\n");
       } else {
-        printf("linked ok\n");
+        //printf("linked ok\n");
       }
     }
   public:

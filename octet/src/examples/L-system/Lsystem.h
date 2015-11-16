@@ -15,12 +15,15 @@ namespace octet {
 	mouse_look mouse_look_helper;
 	helper_fps_controller fps_helper;
 	ref<scene_node> player_node;
+	vec3 cameraPos;
 
 	std::vector<Tree> *trees;
-	Tree tree;	
+	Tree tree;
+
+	std::string treeDescription;
 
 	int counter = 0;
-	int framesPerStep = 20;
+	int framesPerStep = 4;
 
 	std::vector<mesh_cylinder> *meshes;
 
@@ -43,16 +46,12 @@ namespace octet {
 	  the_camera = app_scene->get_camera_instance(0);
 	  the_camera->set_far_plane(10000);
 
-	  mouse_look_helper.init(this, 200.0f / 360.0f, false);
-	  //fps_helper.init(this);
+	  scene_node *camera_node = the_camera->get_node();
+	  mat4t &camera_to_world = camera_node->access_nodeToParent();
+	  //camera_node->translate(vec3(0, 0, 1));
 
-      material *red = new material(vec4(1, 0, 0, 1));
-      mesh_box *box = new mesh_box(vec3(4));
-      scene_node *node = new scene_node();
-     // app_scene->add_child(node);
-      //app_scene->add_mesh_instance(new mesh_instance(node, box, red));
-
-	  //meshes = new std::vector<mesh_cylinder>();
+	  //mouse_look_helper.init(this, 200.0f / 360.0f, false);
+	  //fps_helper.init(this);       
 
 	  rulesEngine.setAxiom("FX");		  
 	  rulesEngine.addRule("F", "C0F/F-[C1-F+F]+[C2+F-F]", 1);
@@ -73,53 +72,44 @@ namespace octet {
 	  rulesEngine.clearRules();
 	  rulesEngine.addRule("]", "L]", 1); //add end leaves
 	  std::string result4 = rulesEngine.iterate();
-	  
+	  treeDescription = result4;
 
-	  trees = new std::vector<Tree>(500);
-
-	  mat4t root;
-	  root.loadIdentity();
-	  tree.init(root, app_scene, trees, meshes, result4, &idGen, framesPerStep);
-	  tree.setAngle(-25);
-	  tree.setAngleY(20);
-	  //tree.setAngleY(0);
-	  tree.setSegmentLength(0.5f);
-	  tree.setSegmentThickness(0.005f);
-	  tree.setInitialColor(vec4(0.50196078431f, 0.50196078431f, 0, 0));
-	  tree.setFinalColor(vec4(0.271f, 0.192f, 0.047f, 0));
-	  tree.setFramesUntilFinalColor(200);  
-
-	  trees->push_back(tree);
-
-	  
-
-	 
-
-	  float player_height = 1.83f;
-	  float player_radius = 0.25f;
-	  float player_mass = 90.0f;
-
-	  mat4t mat;
-	  mat.loadIdentity();
-	  mat.translate(0, player_height*0.5f, -10);
-
-	  mesh_instance *mi = app_scene->add_shape(
-		  mat,
-		  new mesh_sphere(vec3(0), player_radius),
-		  new material(vec4(0, 0, 1, 1)),
-		  false, player_mass,
-		  new btCapsuleShape(0.25f, player_height)
-		  );
-	  
-	  player_node = mi->get_node();  
+	  createTree();  
 
     }	
+
+	void createTree()
+	{
+		//Create initial tree
+		trees = new std::vector<Tree>(500);
+
+		mat4t root;
+		root.loadIdentity();
+
+		tree.init(root, app_scene, trees, meshes, treeDescription, &idGen, framesPerStep);
+		tree.setAngle(-25);
+		tree.setAngleY(20);
+		tree.setSegmentLength(0.5f);
+		tree.setSegmentThickness(0.005f);
+		tree.setInitialColor(vec4(0.50196078431f, 0.50196078431f, 0, 0));
+		tree.setFinalColor(vec4(0.271f, 0.192f, 0.047f, 0));
+		tree.setFramesUntilFinalColor(25);
+
+		trees->push_back(tree);		
+	}
     
     void draw_world(int x, int y, int w, int h) {	
 
 		if (is_key_down(key_ctrl))
 		{
 			int max = trees->size();
+
+			//segment growing			
+			for (int i = 0; i < max; i++)
+			{
+				if ((*trees)[i].enabled)
+					(*trees)[i].GrowSegments();
+			}
 			//new segments creation
 			counter++;
 			if (counter > framesPerStep)
@@ -130,45 +120,18 @@ namespace octet {
 						(*trees)[i].Grow();
 				}
 				counter = 0;
-			}
-
-			//segment growing
-			
-			for (int i = 0; i < max; i++)
-			{
-				if ((*trees)[i].enabled)
-					(*trees)[i].GrowSegments();
-			}
+			}			
 		}
 
 
-	  app_scene->set_render_debug_lines(true);
-      int vx = 0, vy = 0;
-      get_viewport_size(vx, vy);
-      app_scene->begin_render(vx, vy);
-
-      // update matrices. assume 30 fps.
-      app_scene->update(1.0f/30);
-
-      // draw the scene
-      app_scene->render((float)vx / vy);
-
-      // tumble the box  (there is only one mesh instance)
-      scene_node *node = app_scene->get_mesh_instance(0)->get_node();
-      node->rotate(1, vec3(1, 0, 0));
-      node->rotate(1, vec3(0, 1, 0));
-
+	 
+      
 	  scene_node *camera_node = the_camera->get_node();
 	  mat4t &camera_to_world = camera_node->access_nodeToParent();
-	  mouse_look_helper.update(camera_to_world);
-
-	  
-
 
 	  if (is_key_down(key_left))
 	  {
-		  camera_node->translate(vec3(-0.15f, 0, 0));
-		  //camNode->rotate(5, vec3(0, 0, 1));
+		  camera_node->translate(vec3(-0.15f, 0, 0));		  
 	  }
 	  if (is_key_down(key_right))
 	  {
@@ -184,13 +147,40 @@ namespace octet {
 	  }
 	  if (is_key_down(key_backspace))
 	  {
-		  camera_node->translate(vec3(0, 0.15f, 0));
+		  //camera_node->translate(vec3(0, 0.15f, 0));
+		  app_scene->reset();
+		  trees->clear();
+		  app_scene->create_default_camera_and_lights();
+
+		  createTree();
 	  }
 	  if (is_key_down(key_alt))
 	  {
 		  camera_node->translate(vec3(0, -0.15f, 0));
 	  }
 
+
+	  //move the camera to fit the tree size
+	  the_camera = app_scene->get_camera_instance(0);	  
+
+	  aabb bb = app_scene->get_world_aabb();
+	  bb = bb.get_union(aabb(vec3(0, 0, 0), vec3(5, 5, 5)));	 
+	  float bb_size = length(bb.get_half_extent()) * 2.0f;
+	  float distance = app_scene->max(bb.get_max().z(), bb_size) * 2;
+	  vec3 targetPos = vec3(0, bb.get_center().y()+2, distance-27);
+	  camera_node->loadIdentity();	 
+	  //cameraPos = 
+	  camera_node->translate(targetPos);
+	 
+	  int vx = 0, vy = 0;
+	  get_viewport_size(vx, vy);
+	  app_scene->begin_render(vx, vy);
+
+	  // update matrices. assume 30 fps.
+	  app_scene->update(1.0f / 30);
+
+	  // draw the scene
+	  app_scene->render((float)vx / vy);
 
     }
   };

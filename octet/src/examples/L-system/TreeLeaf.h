@@ -1,4 +1,5 @@
-# define PI           3.14159265358979323846  /* pi */
+# define RADTODEG           57.2957795131  /* pi */
+
 
 namespace octet
 
@@ -24,6 +25,12 @@ namespace octet
 		{
 			startNode = _startNode;
 
+			//create and locate the box
+			mat = new material(color);
+			m = new mesh_box(vec3(0.1f*leafScale, leafThickness*leafScale, 0.05f *leafScale));
+
+			scene_node *node = (scene->add_shape(transformMatrix, m, mat, false))->get_node();
+
 			//locate the start point
 			transformMatrix = startNode->transform;		
 			mat4t transformMatrixInv;
@@ -34,26 +41,30 @@ namespace octet
 			vec4 localForward = (vec4(0, 0, 1, 0) * transformMatrixInv);
 			vec3 pos = transformMatrix.getPosition();
 
-			vec2 forw2 = vec2(localForward.x(), localForward.z()).normalize();
+			/*vec2 forw2 = vec2(localForward.x(), localForward.z()).normalize();
 			vec2 pos2 = vec2(pos.x(), pos.z()).normalize();
 			float result = forw2.dot(pos2);
-			rotY = std::acosf(result)* 180/PI;
-			//if (result < 0) rotY *= -1;
-			transformMatrix.rotate(rotY, 0, 1, 0);
+			rotY = std::acosf(result)* RADTODEG;*/
+			transformMatrix.rotate(45, 0, 1, 0);
 
-			transformMatrix.invertQuick(transformMatrixInv);
+			/*transformMatrix.invertQuick(transformMatrixInv);
 			vec4 localRight = (vec4(1, 0, 0, 0) * transformMatrixInv);
-			transformMatrix.rotate(-35, localRight.x(), localRight.y(), localRight.z());
+			transformMatrix.rotate(-35, localRight.x(), localRight.y(), localRight.z());*/
 
 			transformMatrix.invertQuick(transformMatrixInv);
+			//vec4 localRigth = (vec4(1, 0, 0, 0) * transformMatrixInv);
+			//transformMatrix.translate(localRigth.xyz() *0.1f *leafScale / 2);
 			localForward = (vec4(0, 0, 1, 0) * transformMatrixInv);
-			transformMatrix.translate(localForward.xyz() *0.1f *leafScale/2);
+			//transformMatrix.translate(-localForward.xyz() *0.05f *leafScale / 2);
+
+			transformMatrix.translate(localForward.xyz() * 0.1f);
+
 
 			//create and locate the box
 			mat = new material(color);
-			m = new mesh_box(vec3(0.05f*leafScale, leafThickness*leafScale, 0.1f *leafScale));
+			m = new mesh_box(vec3(0.1f*leafScale, leafThickness*leafScale, 0.05f *leafScale));
 			
-			scene->add_shape(transformMatrix, m, mat, false);
+			scene_node *n = (scene->add_shape(transformMatrix, m, mat, false))->get_node();
 		}
 
 

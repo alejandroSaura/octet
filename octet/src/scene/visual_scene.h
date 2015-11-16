@@ -595,12 +595,16 @@ namespace octet { namespace scene {
     aabb get_world_aabb() {
       aabb world_aabb;
       bool first = true;
-      for (int i = 0; i != mesh_instances.size(); ++i) {
+	  int size = mesh_instances.size();
+      for (int i = 0; i != size; ++i) {
         mesh_instance *mi = mesh_instances[i];
         if (mi && mi->get_node()) {
           mat4t nodeToWorld = mi->get_node()->calcModelToWorld();
           aabb bb = mi->get_mesh()->get_aabb();
           bb = bb.get_transform(nodeToWorld);
+
+		  //world_aabb = world_aabb.get_union(bb);
+
           if (first) {
             world_aabb = bb;
             first = false;
@@ -611,6 +615,8 @@ namespace octet { namespace scene {
       }
       return world_aabb;
     }
+
+	//aabb get_world_aabb_custom()
 
     struct cast_result {
       mesh_instance *mi;

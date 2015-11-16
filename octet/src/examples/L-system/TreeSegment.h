@@ -9,14 +9,16 @@ namespace octet {
 
 		mesh_instance *meshI;
 
-		float thicknessSpeed = 0.0005f;
+		//float thicknessSpeed = 0.0005f;
+
+		float thicknessSpeed = 0.0025f;
 
 		vec4 initialColor = vec4(0.50196078431f, 0.50196078431f, 0, 0);
 		vec4 finalColor = vec4(0.271f, 0.192f, 0.047f, 0);
-		int framesUntilFinalColor = 200;
+		int framesUntilFinalColor = 10;
 		int t;
 
-		int framesPerStep = 0;
+		int framesPerStep = 2;
 		int currentFrame = 0;
 		
 		float rotX, rotY, rotZ;
@@ -53,6 +55,11 @@ namespace octet {
 
 			thickness += thicknessSpeed;
 
+			/*if (currentFrame > framesPerStep)
+			{
+				done = true;
+			}*/
+
 			if (!done)
 			{
 				currentFrame++;
@@ -68,7 +75,7 @@ namespace octet {
 
 			float currentLenght = currentFrame*(lenght / framesPerStep);
 
-			printf("segment growing!\n");
+			//printf("segment growing!\n");
 			transformMatrix = startNode->transform;
 
 			mat4t transformMatrixInv;
@@ -84,9 +91,9 @@ namespace octet {
 			zcylinder *mathCylinder = new zcylinder(vec3(0, 0, 0), thickness, currentLenght / 2);
 			//mesh_cylinder c;
 			cylinder->clear_attributes();
-			cylinder->set_size(*mathCylinder, cylTransform, 32);
+			cylinder->set_size(*mathCylinder, cylTransform, 8);
 
-			if (currentFrame > framesPerStep)
+			if (currentFrame > framesPerStep-1)
 			{
 				done = true;
 			}
