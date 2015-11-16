@@ -611,6 +611,7 @@ namespace octet { namespace scene {
           } else {
             world_aabb = world_aabb.get_union(bb);
           }
+
         }
       }
       return world_aabb;

@@ -167,10 +167,11 @@ namespace octet {
 	  bb = bb.get_union(aabb(vec3(0, 0, 0), vec3(5, 5, 5)));	 
 	  float bb_size = length(bb.get_half_extent()) * 2.0f;
 	  float distance = app_scene->max(bb.get_max().z(), bb_size) * 2;
-	  vec3 targetPos = vec3(0, bb.get_center().y()+2, distance-27);
+	  vec3 targetPos = vec3(0, bb.get_center().y()+3, distance-27);
 	  camera_node->loadIdentity();	 
-	  //cameraPos = 
-	  camera_node->translate(targetPos);
+
+	  cameraPos = lerp(cameraPos, targetPos, 0.033333f*5);
+	  camera_node->translate(cameraPos);
 	 
 	  int vx = 0, vy = 0;
 	  get_viewport_size(vx, vy);
@@ -183,5 +184,10 @@ namespace octet {
 	  app_scene->render((float)vx / vy);
 
     }
+
+	vec3 lerp(vec3 a, vec3 b, float t){
+		return (1 - t)*a + t*b;
+	}
+
   };
 }
