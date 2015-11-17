@@ -42,7 +42,7 @@ namespace octet {
 
 		bool done; // used to know when the segment has reached its max length
 
-		// used to know when the branch where the segment is placed is dead,
+		// when the branch where the segment is placed is dead,
 		// so the segment stops getting thicker.
 		bool dead; 
 
@@ -55,11 +55,6 @@ namespace octet {
 
 			thickness += thicknessSpeed;
 
-			/*if (currentFrame > framesPerStep)
-			{
-				done = true;
-			}*/
-
 			if (!done)
 			{
 				currentFrame++;
@@ -67,7 +62,6 @@ namespace octet {
 
 			float aux = ((float)t / (float)framesUntilFinalColor);
 			color = finalColor*aux + initialColor*(1 - aux);
-			//color = vec4(1, 0, 0, 0);
 			mate->set_diffuse(color);
 			meshI->set_material(mate);
 			t++;
@@ -75,9 +69,7 @@ namespace octet {
 
 			float currentLenght = currentFrame*(lenght / framesPerStep);
 
-			//printf("segment growing!\n");
 			transformMatrix = startNode->transform;
-
 			mat4t transformMatrixInv;
 			transformMatrix.invertQuick(transformMatrixInv);
 
@@ -89,7 +81,6 @@ namespace octet {
 			cylTransform.translate(localRight*currentLenght / 2);
 
 			zcylinder *mathCylinder = new zcylinder(vec3(0, 0, 0), thickness, currentLenght / 2);
-			//mesh_cylinder c;
 			cylinder->clear_attributes();
 			cylinder->set_size(*mathCylinder, cylTransform, 8);
 
@@ -100,8 +91,7 @@ namespace octet {
 			
 		}
 
-
-		TreeNode Init(ref<visual_scene> scene, std::vector<mesh_cylinder> *meshes, int fps, vec4 _initialColor, vec4 _finalColor, int _framesUntilFinalColor)
+		TreeNode Init(ref<visual_scene> scene, MeshPool *cylmeshes, int fps, vec4 _initialColor, vec4 _finalColor, int _framesUntilFinalColor)
 		{
 			initialColor = _initialColor;
 			finalColor = _finalColor;
@@ -110,11 +100,11 @@ namespace octet {
 			t = 0;
 			color = initialColor;
 
-
 			framesPerStep = fps;
 			currentFrame = 0;
 			done = false;
 			dead = false;
+
 			//locate the start point
 			transformMatrix = startNode->transform;
 
@@ -137,22 +127,15 @@ namespace octet {
 				cylTransform.translate(localRight*lenght / 2);
 
 				zcylinder *mathCylinder = new zcylinder(vec3(0, 0, 0), thickness, lenght / 2);
-				cylinder = new mesh_cylinder(*mathCylinder, cylTransform, 32);
-				//cylinder.get_mesh()
-				//meshes->push_back(cylinder);
-			}
+				cylinder = new mesh_cylinder(*mathCylinder, cylTransform, 32);	
 
+				/*cylinder = cylmeshes->getCylinderMesh();
+				cylinder->clear_attributes();
+				cylinder->init(*mathCylinder, cylTransform, 8);*/
+			}		
 			
-			//mesh_cylinder m = (*meshes)[meshes->size() - 1];
-			//scene->add_shape(transformMatrix, (*meshes)[meshes->size()-1].get_mesh(), new material(color), false);
 			mate = new material(color);
 			meshI = scene->add_shape(transformMatrix, cylinder, mate, false);
-
-			//scene->add_shape(transformMatrix, new mesh_box(vec3(0.2f, 0.2f, 0.2f)), new material(color), false);	
-
-				
-
-			//printf("segment drawed: rotZ = %2.6f en pos: x=%2.6f, y=%2.6f, z=%2.6f", (rotZ, transformMatrix.colw()[0], transformMatrix.colw()[1], transformMatrix.colw()[2]));
 
 			//create endNode
 			TreeNode node;
@@ -162,22 +145,11 @@ namespace octet {
 			node.transform = startNode->transform;
 			transformMatrix.invertQuick(transformMatrixInv);			
 			localUp = vec4(0, 1, 0, 0) * lenght * transformMatrixInv;
-			//node.transform = startNode->transform;
 			
-			node.transform.translate(localUp.x(), localUp.y(), localUp.z());
-
-			/*node.transform.invertQuick(transformMatrixInv);
-			localForward = vec4(0, 0, 1, 0) * transformMatrixInv;
-			node.transform.rotate(rotZ, localForward.x(), localForward.y(), localForward.z());*/
-
-			//node.transform.translate(localUp.x(), localUp.y(), localUp.z());
-
-			//array->push_back(node);
-
-			//scene->add_debug_line(startNode->transform.getPosition(), node.transform.getPosition());
+			node.transform.translate(localUp.x(), localUp.y(), localUp.z());			
 
 			//just for debug purposes
-			node.transform.invertQuick(transformMatrixInv);
+			/*node.transform.invertQuick(transformMatrixInv);
 			localUp = vec4(0, 1, 0, 0) * transformMatrixInv;
 			localForward = vec4(0, 0, 1, 0) * transformMatrixInv;
 			localRight = vec4(1, 0, 0, 0) * transformMatrixInv;
@@ -185,7 +157,7 @@ namespace octet {
 			vec3 position;
 			position.x() = node.transform.w().x();
 			position.y() = node.transform.w().y();
-			position.z() = node.transform.w().z();
+			position.z() = node.transform.w().z();*/
 
 			/*scene->add_debug_line(position, position + localForward);
 			scene->add_debug_line(position, position + localRight);

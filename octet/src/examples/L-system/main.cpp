@@ -12,8 +12,8 @@
 #include "../../octet.h"
 
 #include <thread>
-
-
+#include <math.h>
+#include "MeshPool.h"
 #include "Tree.h"
 #include "RulesEngine.h"
 #include "Lsystem.h"

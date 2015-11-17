@@ -23,7 +23,8 @@ namespace octet {
 		std::vector<float> *memoryAngle;
 		std::vector<float> *memoryAngleY;
 
-		std::vector<mesh_cylinder> *meshes;
+		MeshPool *cylMeshes;
+
 		std::vector<TreeSegment> *segments;
 		std::vector<TreeNode> *nodes;
 		std::vector<TreeLeaf> *leafs;
@@ -51,7 +52,7 @@ namespace octet {
 	public:
 		bool enabled = false;		
 
-		void init(mat4t _root, ref<visual_scene> _scene, std::vector<Tree> *t, std::vector<mesh_cylinder> *m, std::string description, int *idGen, int framesPStep)
+		void init(mat4t _root, ref<visual_scene> _scene, std::vector<Tree> *t, MeshPool *cylM, std::string description, int *idGen, int framesPStep)
 		{
 			stringFinished = false;
 
@@ -78,7 +79,7 @@ namespace octet {
 			nodes = new std::vector<TreeNode>();
 			leafs = new std::vector<TreeLeaf>();
 
-			meshes = m;
+			cylMeshes = cylM;
 
 			scene = _scene;
 
@@ -210,7 +211,7 @@ namespace octet {
 					
 
 					//draw segment
-					TreeNode n = newSegment.Init(scene, meshes, framesPerStep, initialColor, finalColor, framesUntilFinalColor);
+					TreeNode n = newSegment.Init(scene, cylMeshes, framesPerStep, initialColor, finalColor, framesUntilFinalColor);
 
 					//push created node and assign to segment					
 					nodes->push_back(n);
@@ -274,7 +275,7 @@ namespace octet {
 					*(idGenerator) += 1;
 					Tree *tree = &(*treesArray)[newId];
 					tree->enabled = true;
-					tree->init(currentNode->transform, scene, treesArray, meshes, str, idGenerator, framesPerStep);
+					tree->init(currentNode->transform, scene, treesArray, cylMeshes, str, idGenerator, framesPerStep);
 					tree->setAngle(angle);
 					tree->setAngleY(angleY);
 					tree->setSegmentLength(segmentLength);

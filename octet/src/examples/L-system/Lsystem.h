@@ -10,12 +10,11 @@ namespace octet {
     // scene for drawing box
     ref<visual_scene> app_scene;
 	RulesEngine rulesEngine;
-	ref<camera_instance> the_camera;
-
-	mouse_look mouse_look_helper;
-	helper_fps_controller fps_helper;
-	ref<scene_node> player_node;
+	
+	ref<camera_instance> the_camera;	
 	vec3 cameraPos;
+	mouse_look mouse_look_helper;
+
 
 	std::vector<Tree> *trees;
 	Tree tree;
@@ -25,9 +24,10 @@ namespace octet {
 	int counter = 0;
 	int framesPerStep = 4;
 
-	std::vector<mesh_cylinder> *meshes;
+	//std::vector<mesh_cylinder> *cylinderMeshes;
+	MeshPool *cylMeshPool;
 
-	int idGen = 1;
+	int idGen = 1; //clear it at scene redraw
 
   public:
 	
@@ -39,7 +39,6 @@ namespace octet {
     /// this is called once OpenGL is initialized
     void app_init() {
 
-	meshes = new std::vector<mesh_cylinder>();
 
       app_scene =  new visual_scene();
       app_scene->create_default_camera_and_lights();
@@ -50,8 +49,10 @@ namespace octet {
 	  mat4t &camera_to_world = camera_node->access_nodeToParent();
 	  //camera_node->translate(vec3(0, 0, 1));
 
-	  //mouse_look_helper.init(this, 200.0f / 360.0f, false);
+	  mouse_look_helper.init(this, 200.0f / 360.0f, false);
 	  //fps_helper.init(this);       
+
+	  cylMeshPool = new MeshPool();
 
 	  rulesEngine.setAxiom("FX");		  
 	  rulesEngine.addRule("F", "C0F/F-[C1-F+F]+[C2+F-F]", 1);
@@ -76,6 +77,8 @@ namespace octet {
 
 	  createTree();  
 
+
+	  app_scene->set_render_debug_lines(true);
     }	
 
 	void createTree()
@@ -86,7 +89,7 @@ namespace octet {
 		mat4t root;
 		root.loadIdentity();
 
-		tree.init(root, app_scene, trees, meshes, treeDescription, &idGen, framesPerStep);
+		tree.init(root, app_scene, trees, cylMeshPool, treeDescription, &idGen, framesPerStep);
 		tree.setAngle(-25);
 		tree.setAngleY(20);
 		tree.setSegmentLength(0.5f);
@@ -121,10 +124,7 @@ namespace octet {
 				}
 				counter = 0;
 			}			
-		}
-
-
-	 
+		}	 
       
 	  scene_node *camera_node = the_camera->get_node();
 	  mat4t &camera_to_world = camera_node->access_nodeToParent();
@@ -148,8 +148,10 @@ namespace octet {
 	  if (is_key_down(key_backspace))
 	  {
 		  //camera_node->translate(vec3(0, 0.15f, 0));
+		  cylMeshPool->resetPool();
 		  app_scene->reset();
 		  trees->clear();
+		  idGen = 1;
 		  app_scene->create_default_camera_and_lights();
 
 		  createTree();
@@ -171,8 +173,10 @@ namespace octet {
 	  camera_node->loadIdentity();	 
 
 	  cameraPos = lerp(cameraPos, targetPos, 0.033333f*5);
-	  camera_node->translate(cameraPos);
-	 
+	  camera_node->translate(cameraPos);	 
+
+	  //mouse_look_helper.update(camera_to_world);
+
 	  int vx = 0, vy = 0;
 	  get_viewport_size(vx, vy);
 	  app_scene->begin_render(vx, vy);

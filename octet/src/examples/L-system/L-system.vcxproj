@@ -219,6 +219,7 @@
     <ClInclude Include="..\..\shaders\shaders.h" />
     <ClInclude Include="..\..\shaders\texture_shader.h" />
     <ClInclude Include="Lsystem.h" />
+    <ClInclude Include="MeshPool.h" />
     <ClInclude Include="RulesEngine.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="TreeLeaf.h" />
