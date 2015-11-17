@@ -148,7 +148,7 @@ namespace octet {
 	  if (is_key_down(key_backspace))
 	  {
 		  //camera_node->translate(vec3(0, 0.15f, 0));
-		  cylMeshPool->resetPool();
+		  //cylMeshPool->resetPool();
 		  app_scene->reset();
 		  trees->clear();
 		  idGen = 1;

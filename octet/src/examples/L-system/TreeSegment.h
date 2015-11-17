@@ -126,7 +126,7 @@ namespace octet {
 				localRight = vec4(0, 1, 0, 0) * transformMatrixInv;
 				cylTransform.translate(localRight*lenght / 2);
 
-				zcylinder *mathCylinder = new zcylinder(vec3(0, 0, 0), thickness, lenght / 2);
+				zcylinder *mathCylinder = new zcylinder(vec3(0, 0, 0), thickness, 0);
 				cylinder = new mesh_cylinder(*mathCylinder, cylTransform, 32);	
 
 				/*cylinder = cylmeshes->getCylinderMesh();
