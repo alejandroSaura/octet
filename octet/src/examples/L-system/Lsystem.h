@@ -36,6 +36,25 @@ namespace octet {
 		float rotZ;
 		float rotY;
 
+		//ruleEngine parameters
+		struct rule
+		{
+			std::string leftSide;
+			std::string rightSide;
+			float probability;
+		};
+		struct treeDefinition
+		{
+			std::string axiom;
+			std::vector<rule> rules;
+		};
+		//we'll create a vector of rules for each tree type defined on the csv
+		std::vector<treeDefinition> treesDefinition;
+
+		bool freeMode = false;
+
+		int currentTree = 0;
+
 	public:
 
 
@@ -50,7 +69,7 @@ namespace octet {
 			app_scene = new visual_scene();
 			app_scene->create_default_camera_and_lights();
 			the_camera = app_scene->get_camera_instance(0);
-			the_camera->set_far_plane(10000);
+			the_camera->set_far_plane(100000);
 
 			scene_node *camera_node = the_camera->get_node();
 			mat4t &camera_to_world = camera_node->access_nodeToParent();
@@ -61,7 +80,7 @@ namespace octet {
 
 			ReadConfFile();
 
-			createTree();
+			createTree(0, 5);
 
 
 			app_scene->set_render_debug_lines(true);
@@ -82,6 +101,10 @@ namespace octet {
 				while (!pipe.eof())				//read until end of the file
 				{
 					pipe.getline(buffer, sizeof(buffer));			//read a row
+					if (buffer[0] == '\0')
+					{
+						continue; //if the line is empty, skip
+					}
 
 					if (rowCounter == 1) //parameters row
 					{
@@ -134,8 +157,11 @@ namespace octet {
 						}
 					}
 
-					if (rowCounter == 4) //ruleEngine definitions row
+					if (rowCounter >= 4) //rules definition. One set (tree) per row
 					{
+					treeDefinition treeDef; //rules and axiom for this tree
+					std::vector<std::string> rawData; //storage of all columns
+
 						// loop over columns
 						char *columnPointer;					//Pointer - read colum
 						columnPointer = &(buffer[0]);			// pointing to first char of each cell
@@ -160,48 +186,103 @@ namespace octet {
 							else
 							{
 								value = "";
-							}						
+							}			
+
+							if (col == 0) //axiom
+							{
+								treeDef.axiom = value;
+							}
+							else
+							{
+								rawData.push_back(value);
+							}
 
 							columnPointer = characterPointer + 1;
 						}
-					}
-					
+
+						//sort the rawData into rules
+						for (int k=0; k < rawData.size(); k++)
+						{
+							if (k % 2 == 0 && rawData[k].size()!=0) //rule string
+							{
+								rule r;
+								r.leftSide = rawData[k].substr(0, rawData[k].find("=", 0));
+								r.rightSide = rawData[k].substr(rawData[k].find("=", 0)+1, rawData[0].size());
+								r.probability = std::stof(rawData[k + 1]);
+								treeDef.rules.push_back(r);
+							}
+						}
+
+						treesDefinition.push_back(treeDef);
+					}					
 					rowCounter++;
 				}
 			}
 
 
-			rulesEngine.setAxiom("FX");
-			rulesEngine.addRule("F", "C0F/F-[C1-F+F]+[C2+F-F]", 1);
-			rulesEngine.addRule("X", "C0F*F++[C1+F/F]+[C2-FF]", 0.30f);
-			rulesEngine.addRule("X", "C0F**F", 0.70f);
-			//rulesEngine.addRule("]", "L]", 1); //add intermediate leaves
+			//rulesEngine.setAxiom("FX");
+			//rulesEngine.addRule("F", "C0F/F-[C1-F+F]+[C2+F-F]", 1);
+			//rulesEngine.addRule("X", "C0F*F++[C1+F/F]+[C2-FF]", 0.30f);
+			//rulesEngine.addRule("X", "C0F**F", 0.70f);
+			////rulesEngine.addRule("]", "L]", 1); //add intermediate leaves
 
-			////rulesEngine.addRule("FF", "F*", 0.5f);
+			//////rulesEngine.addRule("FF", "F*", 0.5f);
 
-			//basic single branch probability example
-			/*rulesEngine.setAxiom("F");
-			rulesEngine.addRule("F", "F+F+F", 0.6f);
-			rulesEngine.addRule("F", "F-F-F", 0.4f);*/
+			////basic single branch probability example
+			///*rulesEngine.setAxiom("F");
+			//rulesEngine.addRule("F", "F+F", 0.6f);
+			//rulesEngine.addRule("F", "F-F", 0.4f);*/
 
-			std::string result1 = rulesEngine.iterate();
-			std::string result2 = rulesEngine.iterate();
-			std::string result3 = rulesEngine.iterate();
-			rulesEngine.clearRules();
-			rulesEngine.addRule("]", "L]", 1); //add end leaves
-			std::string result4 = rulesEngine.iterate();
-			treeDescription = result4;
+			//std::string result1 = rulesEngine.iterate();
+			//std::string result2 = rulesEngine.iterate();
+			//std::string result3 = rulesEngine.iterate();
+			//std::string result4 = rulesEngine.iterate();
+			///*std::string result5 = rulesEngine.iterate();
+			//std::string result6 = rulesEngine.iterate();*/
+			//rulesEngine.clearRules();
+			//rulesEngine.addRule("]", "L]", 1); //add end leaves
+			//std::string result5 = rulesEngine.iterate();
+			//treeDescription = result5;
 		}
 
-		void createTree()
+		void createTree(int treeId, int iteration)
 		{
-			//Create initial tree
-			trees = new std::vector<Tree>(500);
+			freeMode = false;
+
+			//cleanUp
+			app_scene->reset();
+			//trees->clear();
+			idGen = 1;
+			app_scene->create_default_camera_and_lights();
+			trees = new std::vector<Tree>(4000);
+
+			//RuleEngine start
+			rulesEngine.clearRules();
+			rulesEngine.setAxiom(treesDefinition[treeId].axiom.c_str());
+			int size = treesDefinition[treeId].rules.size();
+			for (int i = 0; i < size; i++)
+			{
+				rulesEngine.addRule(
+					treesDefinition[treeId].rules[i].leftSide.c_str(),
+					treesDefinition[treeId].rules[i].rightSide.c_str(),
+					treesDefinition[treeId].rules[i].probability);
+			}
+			//iterate
+			std::string result;
+			for (int i = 0; i < iteration; i++)
+			{
+				result = rulesEngine.iterate();
+			}
+			//add leafs
+			rulesEngine.clearRules();
+			rulesEngine.addRule("]", "L]", 1);
+			result = rulesEngine.iterate();
+
 
 			mat4t root;
 			root.loadIdentity();
 
-			tree.init(root, app_scene, trees, cylMeshPool, treeDescription, &idGen, framesPerStep);
+			tree.init(root, app_scene, trees, cylMeshPool, result, &idGen, framesPerStep);
 			tree.setAngle(-25);
 			tree.setAngleY(20);
 			tree.setSegmentLength(0.5f);
@@ -215,7 +296,7 @@ namespace octet {
 
 		void draw_world(int x, int y, int w, int h) {
 
-			if (is_key_down(key_ctrl))
+			if (is_key_down(key_alt))
 			{
 				int max = trees->size();
 
@@ -257,37 +338,55 @@ namespace octet {
 			{
 				camera_node->translate(vec3(0, 0, 0.15f));
 			}
-			if (is_key_down(key_backspace))
+			if (is_key_going_down(key_f1)) //free mode
 			{
-				//camera_node->translate(vec3(0, 0.15f, 0));
-				//cylMeshPool->resetPool();
-				app_scene->reset();
-				trees->clear();
-				idGen = 1;
-				app_scene->create_default_camera_and_lights();
-
-				createTree();
+				//printf("freeMode toggle");
+				if(freeMode)
+				{
+					freeMode = false;
+				}
+				else
+				{
+					set_absolute_mouse_movement(0, 0);
+					freeMode = true;
+				}
+				
 			}
-			if (is_key_down(key_alt))
+			if (is_key_down(key_backspace))
+			{				
+				createTree(0, 3);
+			}
+			if (is_key_down(key_ctrl))
 			{
 				camera_node->translate(vec3(0, -0.15f, 0));
 			}
+			if (is_key_down(key_shift))
+			{
+				camera_node->translate(vec3(0, 0.15f, 0));
+			}
 
+			if (freeMode)
+			{
+				mouse_look_helper.update(camera_to_world);
+			}
+			else
+			{
+				//move the camera to fit the tree size
+				the_camera = app_scene->get_camera_instance(0);
 
-			//move the camera to fit the tree size
-			the_camera = app_scene->get_camera_instance(0);
+				aabb bb = app_scene->get_world_aabb();
+				bb = bb.get_union(aabb(vec3(0, 0, 0), vec3(5, 5, 5)));
+				float bb_size = length(bb.get_half_extent()) * 2.0f;
+				float distance = app_scene->max(bb.get_max().z(), bb_size) * 0.9f;
+				vec3 targetPos = vec3(0, bb.get_center().y() + 3, distance);
+				camera_node->loadIdentity();
 
-			aabb bb = app_scene->get_world_aabb();
-			bb = bb.get_union(aabb(vec3(0, 0, 0), vec3(5, 5, 5)));
-			float bb_size = length(bb.get_half_extent()) * 2.0f;
-			float distance = app_scene->max(bb.get_max().z(), bb_size) * 2;
-			vec3 targetPos = vec3(0, bb.get_center().y() + 3, distance - 27);
-			camera_node->loadIdentity();
+				cameraPos = lerp(cameraPos, targetPos, 0.033333f * 5);
+				camera_node->translate(cameraPos);
+			}
 
-			cameraPos = lerp(cameraPos, targetPos, 0.033333f * 5);
-			camera_node->translate(cameraPos);
+			
 
-			//mouse_look_helper.update(camera_to_world);
 
 			int vx = 0, vy = 0;
 			get_viewport_size(vx, vy);

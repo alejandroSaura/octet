@@ -33,6 +33,7 @@ namespace octet {
     key_tab = 9,
     key_esc = 27,
     key_space = 32,
+	key_f = 102,
 
     // other keys have the following codes:
     key_f1 = 0x80,
@@ -197,6 +198,11 @@ namespace octet {
       mouse_abs_x += x;
       mouse_abs_y += y;
     }
+
+	void set_absolute_mouse_movement(int x, int y) {
+		mouse_abs_x = x;
+		mouse_abs_y = y;
+	}
 
     void get_absolute_mouse_movement(int &x, int &y) {
       x = mouse_abs_x;
