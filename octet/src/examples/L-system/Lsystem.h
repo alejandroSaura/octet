@@ -19,9 +19,7 @@ namespace octet {
 		vec4 finalColor = vec4(0.31f, 0.18f, 0.09f, 0);
 
 		std::vector<Tree> *trees;
-		Tree tree;
-
-		std::string treeDescription;
+		Tree tree;	
 
 		int counter = 0;
 		int framesPerStep = 4;
@@ -75,6 +73,8 @@ namespace octet {
 			app_scene->create_default_camera_and_lights();
 			the_camera = app_scene->get_camera_instance(0);
 			the_camera->set_far_plane(100000);
+
+			
 
 			scene_node *camera_node = the_camera->get_node();
 			mat4t &camera_to_world = camera_node->access_nodeToParent();
@@ -176,13 +176,17 @@ namespace octet {
 						{
 							char *characterPointer;
 							characterPointer = columnPointer;
+							
 
 							std::string value;
 							while (*characterPointer != 0 && *characterPointer != ',')
 							{								
 								++characterPointer;
+							}				
+							if (*characterPointer == 0)
+							{
+								break; //end of row
 							}
-							if (*characterPointer == 0) break; //end of row
 
 							const char *c = columnPointer;
 							unsigned int size = characterPointer - columnPointer;
@@ -263,6 +267,8 @@ namespace octet {
 			app_scene->create_default_camera_and_lights();
 			trees = new std::vector<Tree>(4000);
 
+			
+
 			//RuleEngine start
 			rulesEngine.clearRules();
 			rulesEngine.clearState();
@@ -300,6 +306,14 @@ namespace octet {
 			tree.setFramesUntilFinalColor(framesUntilFinalColor);
 
 			trees->push_back(tree);
+
+
+			// ground
+			/*mat4t groundMat;
+			material *_material = new material(vec4(0.53f, 0.75f, 0.25f, 0));
+			groundMat.loadIdentity();
+			groundMat.translate(0, -5, 0);
+			app_scene->add_shape(groundMat, new mesh_box(vec3(200, 1, 200)), _material, false);*/
 		}
 
 		void draw_world(int x, int y, int w, int h) {
@@ -437,7 +451,7 @@ namespace octet {
 			}
 			if (is_key_down(key_backspace))
 			{				
-				createTree(0, 3);
+				createTree(currentTree, currentIteration);
 			}
 			if (is_key_down(key_ctrl))
 			{
