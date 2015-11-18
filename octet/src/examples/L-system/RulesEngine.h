@@ -76,6 +76,7 @@ namespace octet {
 		{
 			state = "";
 			iterationCounter = 0;
+
 		}
 
 		void clearRules()

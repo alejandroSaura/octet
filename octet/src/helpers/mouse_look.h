@@ -26,7 +26,7 @@ namespace octet { namespace helpers {
       this->the_app = the_app;
       this->sensitivity = sensitivity;
       this->invert_mouse = invert_mouse;
-      the_app->disable_cursor();
+      //the_app->disable_cursor();
     }
 
     /// set this to reset the camera look (for example at the start of a level).

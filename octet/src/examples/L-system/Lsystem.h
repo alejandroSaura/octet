@@ -52,17 +52,43 @@ namespace octet {
 		std::vector<treeDefinition> treesDefinition;
 
 		bool freeMode = false;
+		bool growing = true;
 
 		int currentTree = 0;
 		int currentIteration = 1;
 
-		int maxIteration = 5;
+		int maxIteration = 4;
+
+		TwBar *myBar;
 
 	public:
 
 
 		/// this is called when we construct the class before everything is initialised.
 		Lsystem(int argc, char **argv) : app(argc, argv) {
+		}
+
+		void initTweakBars()
+		{
+			TwInit(TW_OPENGL, NULL);
+
+			
+
+			myBar = TwNewBar("Info");
+
+			TwAddVarRO(myBar, "Tree Id", TW_TYPE_INT8, &(currentTree), " label='Tree ID (</>)' ");
+			TwAddVarRO(myBar, "Iteration", TW_TYPE_INT8, &(currentIteration), " label='Iteration (^/v)' ");
+
+			TwAddSeparator(myBar, "sep1", NULL);
+
+			TwAddVarRO(myBar, "freeMode", TW_TYPE_BOOL8, &(freeMode), " label='FreeMode (F1)' ");
+			TwAddVarRO(myBar, "growing", TW_TYPE_BOOL8, &(growing), " label='Growing (F2)' ");
+
+			TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with SDL and OpenGL.\nPress [Space] to toggle fullscreen.' "); // Message added to the help bar.
+
+
+
+			
 		}
 
 		/// this is called once OpenGL is initialized
@@ -91,6 +117,8 @@ namespace octet {
 
 
 			app_scene->set_render_debug_lines(true);
+
+			initTweakBars();
 		}
 
 		void ReadConfFile()
@@ -316,6 +344,7 @@ namespace octet {
 			app_scene->add_shape(groundMat, new mesh_box(vec3(200, 1, 200)), _material, false);*/
 		}
 
+
 		void draw_world(int x, int y, int w, int h) {
 
 			if (!freeMode) //tree and iteration change
@@ -323,14 +352,14 @@ namespace octet {
 				if (is_key_going_down(key_left))
 				{
 					currentTree -= 1;
-					currentIteration = 1;
+					//currentIteration = 1;
 					if (currentTree < 0)
 					{
 						currentTree = 0;
-						currentIteration = 1;
 					}
 					else
 					{
+						currentIteration = 1;
 						createTree(currentTree, currentIteration);
 					}					
 					printf("currentTree: %d\n", currentTree);
@@ -340,13 +369,14 @@ namespace octet {
 				if (is_key_going_down(key_right))
 				{
 					currentTree += 1;
-					currentIteration = 1;
+					
 					if (currentTree > treesDefinition.size() - 1)
 					{
 						currentTree = treesDefinition.size() - 1;						
 					}
 					else
 					{
+						currentIteration = 1;
 						createTree(currentTree, currentIteration);
 					}					
 					printf("currentTree: %d\n", currentTree);
@@ -386,7 +416,7 @@ namespace octet {
 				}
 			}
 
-			//if (is_key_down(key_alt))
+			if (growing)
 			{
 				int max = trees->size();
 
@@ -453,6 +483,17 @@ namespace octet {
 			{				
 				createTree(currentTree, currentIteration);
 			}
+			if (is_key_going_down(key_f2))
+			{
+				if (growing)
+				{
+					growing = false;
+				}
+				else
+				{
+					growing = true;
+				}
+			}
 			if (is_key_down(key_ctrl))
 			{
 				camera_node->translate(vec3(0, -0.15f, 0));
@@ -495,6 +536,21 @@ namespace octet {
 			// draw the scene
 			app_scene->render((float)vx / vy);
 
+			int mX, mY;
+			get_mouse_pos(mX, mY);
+
+			if (is_key_going_down(key_lmb))
+			{
+				TwMouseButton(TW_MOUSE_PRESSED, TW_MOUSE_LEFT);
+			}			
+			if (is_key_going_up(key_lmb))
+			{
+				TwMouseButton(TW_MOUSE_RELEASED, TW_MOUSE_LEFT);
+			}
+			//TwMouseWheel(get_mouse_wheel());
+			//TwMouseMotion(mX, mY);
+			TwDraw();
+			TwWindowSize(w, h);			
 		}
 
 		vec3 lerp(vec3 a, vec3 b, float t){
