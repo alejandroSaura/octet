@@ -148,6 +148,17 @@ namespace octet {
 			}
 		}
 
+		void GrowLeafs()
+		{
+			//make the segments grow
+			int max = leafs->size();
+			for (int j = 0; j < max; j++)
+			{
+				TreeLeaf leaf = (*leafs)[j];
+				(*leafs)[j].Grow();
+			}
+		}
+
 
 		void Grow()
 		{		
@@ -192,7 +203,7 @@ namespace octet {
 				{
 					//create a leaf from current node 
 					TreeLeaf leaf;
-					leaf.Init(scene, currentNode);
+					leaf.Init(scene, currentNode, framesPerStep+10);
 					leafs->push_back(leaf);
 
 					k++;

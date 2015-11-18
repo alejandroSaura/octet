@@ -15,6 +15,8 @@ namespace octet {
 		vec3 cameraPos;
 		mouse_look mouse_look_helper;
 
+		vec4 initialColor = vec4(1, 0.85f, 0.56f, 0);
+		vec4 finalColor = vec4(0.31f, 0.18f, 0.09f, 0);
 
 		std::vector<Tree> *trees;
 		Tree tree;
@@ -293,9 +295,9 @@ namespace octet {
 			tree.setAngleY(20);
 			tree.setSegmentLength(0.5f);
 			tree.setSegmentThickness(0.005f);
-			tree.setInitialColor(vec4(0.50196078431f, 0.50196078431f, 0, 0));
-			tree.setFinalColor(vec4(0.271f, 0.192f, 0.047f, 0));
-			tree.setFramesUntilFinalColor(25);
+			tree.setInitialColor(initialColor);
+			tree.setFinalColor(finalColor);
+			tree.setFramesUntilFinalColor(framesUntilFinalColor);
 
 			trees->push_back(tree);
 		}
@@ -378,7 +380,10 @@ namespace octet {
 				for (int i = 0; i < max; i++)
 				{
 					if ((*trees)[i].enabled)
+					{
 						(*trees)[i].GrowSegments();
+						(*trees)[i].GrowLeafs();
+					}
 				}
 				//new segments creation
 				counter++;
