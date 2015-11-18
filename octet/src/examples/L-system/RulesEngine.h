@@ -72,6 +72,12 @@ namespace octet {
 			}
 		}
 
+		void clearState()
+		{
+			state = "";
+			iterationCounter = 0;
+		}
+
 		void clearRules()
 		{
 			rules.reset();

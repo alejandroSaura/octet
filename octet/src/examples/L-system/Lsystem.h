@@ -54,6 +54,9 @@ namespace octet {
 		bool freeMode = false;
 
 		int currentTree = 0;
+		int currentIteration = 1;
+
+		int maxIteration = 5;
 
 	public:
 
@@ -80,7 +83,9 @@ namespace octet {
 
 			ReadConfFile();
 
-			createTree(0, 5);
+			currentTree = 0;
+			currentIteration = 1;
+			createTree(currentTree, currentIteration);
 
 
 			app_scene->set_render_debug_lines(true);
@@ -258,6 +263,7 @@ namespace octet {
 
 			//RuleEngine start
 			rulesEngine.clearRules();
+			rulesEngine.clearState();
 			rulesEngine.setAxiom(treesDefinition[treeId].axiom.c_str());
 			int size = treesDefinition[treeId].rules.size();
 			for (int i = 0; i < size; i++)
@@ -296,7 +302,75 @@ namespace octet {
 
 		void draw_world(int x, int y, int w, int h) {
 
-			if (is_key_down(key_alt))
+			if (!freeMode) //tree and iteration change
+			{
+				if (is_key_going_down(key_left))
+				{
+					currentTree -= 1;
+					currentIteration = 1;
+					if (currentTree < 0)
+					{
+						currentTree = 0;
+						currentIteration = 1;
+					}
+					else
+					{
+						createTree(currentTree, currentIteration);
+					}					
+					printf("currentTree: %d\n", currentTree);
+					printf("currentIteration: %d\n", currentIteration);
+					printf("\n");
+				}
+				if (is_key_going_down(key_right))
+				{
+					currentTree += 1;
+					currentIteration = 1;
+					if (currentTree > treesDefinition.size() - 1)
+					{
+						currentTree = treesDefinition.size() - 1;						
+					}
+					else
+					{
+						createTree(currentTree, currentIteration);
+					}					
+					printf("currentTree: %d\n", currentTree);
+					printf("currentIteration: %d\n", currentIteration);
+					printf("\n");
+				}
+				if (is_key_going_down(key_up))
+				{
+					currentIteration += 1;
+					if (currentIteration > maxIteration)
+					{
+						currentIteration = maxIteration;
+					}
+					else
+					{
+						createTree(currentTree, currentIteration);
+					}		
+					printf("currentTree: %d\n", currentTree);
+					printf("currentIteration: %d\n", currentIteration);
+					printf("\n");
+				}
+				if (is_key_going_down(key_down))
+				{
+					currentIteration -= 1;
+					if (currentIteration < 1)
+					{
+						currentIteration = 1;						
+					}
+					else
+					{
+						createTree(currentTree, currentIteration);
+					}
+					printf("currentTree: %d\n", currentTree);
+					printf("currentIteration: %d\n", currentIteration);
+					printf("\n");
+
+				}
+			}
+
+			//if (is_key_down(key_alt))
 			{
 				int max = trees->size();
 
@@ -322,22 +396,26 @@ namespace octet {
 			scene_node *camera_node = the_camera->get_node();
 			mat4t &camera_to_world = camera_node->access_nodeToParent();
 
-			if (is_key_down(key_left))
+			if (freeMode) //camera movement
 			{
-				camera_node->translate(vec3(-0.15f, 0, 0));
+				if (is_key_down(key_left))
+				{
+					camera_node->translate(vec3(-0.15f, 0, 0));
+				}
+				if (is_key_down(key_right))
+				{
+					camera_node->translate(vec3(0.15f, 0, 0));
+				}
+				if (is_key_down(key_up))
+				{
+					camera_node->translate(vec3(0, 0, -0.15f));
+				}
+				if (is_key_down(key_down))
+				{
+					camera_node->translate(vec3(0, 0, 0.15f));
+				}
 			}
-			if (is_key_down(key_right))
-			{
-				camera_node->translate(vec3(0.15f, 0, 0));
-			}
-			if (is_key_down(key_up))
-			{
-				camera_node->translate(vec3(0, 0, -0.15f));
-			}
-			if (is_key_down(key_down))
-			{
-				camera_node->translate(vec3(0, 0, 0.15f));
-			}
+
 			if (is_key_going_down(key_f1)) //free mode
 			{
 				//printf("freeMode toggle");
